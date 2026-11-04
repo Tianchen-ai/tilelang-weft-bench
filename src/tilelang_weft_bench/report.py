@@ -274,7 +274,8 @@ def plot(rows, destination):
         values = sorted(row["reference_speedup"] for row in rows
                         if row["target"] == target and row["reference_speedup"] != "")
         if values:
-            axes[0].step(values, [(i + 1) / len(values) for i in range(len(values))], label=f"{target} (n={len(values)})")
+            axes[0].step(values, [(i + 1) / len(values) for i in range(len(values))],
+                         where="post", label=f"{target} (n={len(values)})")
     axes[0].axvline(1, color="#778899", linewidth=1, linestyle="--")
     axes[0].set(xscale="log", xlabel="Native reference / TileLang time", ylabel="Fraction of matched cases")
     axes[0].legend(fontsize=8)
@@ -285,6 +286,9 @@ def plot(rows, destination):
     axes[1].bar(labels, done, color="#3a7ba8", label="Executed and correct")
     axes[1].set(ylabel="Operator cases")
     axes[1].legend(fontsize=8)
+    axes[1].set_ylim(0, max(total) * 1.14)
+    for index, (count, formal) in enumerate(zip(done, total)):
+        axes[1].text(index, formal + 2, f"{count}/{formal}", ha="center", fontsize=9)
     for suffix in ("svg", "png"):
         figure.savefig(destination / ("performance." + suffix), dpi=160)
     plt.close(figure)
