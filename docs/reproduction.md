@@ -48,6 +48,23 @@ cases without a matched external reference retain a blank ratio and their own
 correctness/timing result. Different source algorithms or preparation boundaries
 are identified before interpreting a difference from Triton.
 
+Generate the presentation table from explicitly selected runs and fixed references:
+
+```sh
+python -m tilelang_weft_bench.report \
+  --run sg2044=output/current/sg2044/selected --reference sg2044=output/baselines/sg2044 \
+  --run k1=output/current/k1/selected --reference k1=output/baselines/k1 \
+  --run k3-a100=output/current/k3-a100/selected --reference k3-a100=output/baselines/k3-a100 \
+  --run x86-1t=output/current/x86-1t/selected --reference x86-1t=output/baselines/x86-1t \
+  --triton x86-1t=output/comparisons/x86-1t --plot --output output/reports/latest
+```
+
+Final reporting rejects incomplete JIT/cache/hot-call evidence, missing native
+samples and unmatched required references. `--partial` retains incomplete rows
+explicitly during development. Projection prefill uses the existing 64-output
+sample and checks every output for finiteness; decode checks every column.
+Quantized activation bytes are checked against the declared target storage rule.
+
 Results and artifacts live under this repository's ignored `output/` directory.
 Public release tables and figures are sanitized copies; SSH hosts, machine paths,
 models and credentials remain local. Re-running a target/case replaces its current

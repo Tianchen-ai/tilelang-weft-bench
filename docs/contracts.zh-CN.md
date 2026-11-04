@@ -36,6 +36,11 @@ GGML model-default AMX 的持久 packing 使用既有显式 provider，并独立
 metadata。机器 profile 表达允许的能力；同一程序的其他计算仍可采用向量。
 产物包含某条指令与运行时观察到条件分支是不同的证据字段。
 
+CSV 的 `used_extensions`、`required_extensions` 表示产物的附加扩展合同，
+包括 IME 或 AMX。基础向量计算另由 `selected_physical_engines`、架构与 VLEN
+展示；附加扩展列表为空不能解释为标量执行。`instruction_path=not_observed`
+明确保留条件指令路径尚未观察的状态。
+
 K3 A100 必须先注册 PID，再设置 affinity。A100 核组为 VLEN1024，X100 为 VLEN256。
 目标探测检查实际执行核心。同一机器同时只运行一组性能队列。
 

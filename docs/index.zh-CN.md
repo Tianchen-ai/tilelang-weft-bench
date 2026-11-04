@@ -28,6 +28,11 @@ tilelang-weft-bench list --kind targets
 `triton-weft-bench` 是共用测量引擎的发行名称。TileLang 路径导入 `weft_bench` 与
 `tilelang_weft_bench`，使用已安装的 TileLang–Weft 和共享 `weft-core` SDK 编译。
 
+Release 的 `constraints.txt` 固定 TileLang `0.1.15+weft.2`、core `0.1.1`、共用
+引擎 `1.0.1` 与本包 `0.1.0`。可用
+`pip install -c constraints.txt --find-links ./wheels tilelang tilelang-weft-bench`
+安装配套版本。
+
 每台执行主机安装对应原生 wheel。RISC-V Python ABI、libc 和 x86 指令要求见各 wheel
 的发行说明。core SDK 提供 Clang 23、resource headers 和 OpenMP 支持。
 

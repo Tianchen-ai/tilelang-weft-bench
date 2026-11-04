@@ -43,6 +43,12 @@ machine profile selects permitted hardware; it does not force every arithmetic
 operation onto matrix hardware. An instruction in an artifact and observation of
 a conditional execution branch are separate evidence fields.
 
+The CSV's `used_extensions` and `required_extensions` describe the artifact's
+additional extension contract, including IME or AMX. Base vector work is recorded
+by `selected_physical_engines`, target architecture and VLEN; an empty additional
+extension list does not imply scalar execution. `instruction_path=not_observed`
+keeps conditional runtime instruction coverage explicit.
+
 K3 A100 requires PID registration before CPU affinity. Its A100 group uses
 VLEN1024; X100 uses VLEN256. The target probe checks the selected execution core.
 One target machine runs one performance queue at a time.

@@ -1,0 +1,4 @@
+tilelang==0.1.15+weft.2
+weft-core==0.1.1
+triton-weft-bench==1.0.1
+tilelang-weft-bench==0.1.0

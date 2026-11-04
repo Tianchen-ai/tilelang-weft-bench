@@ -36,6 +36,10 @@ python -m pip install --find-links ./wheels ./wheels/weft_core-*.whl \
 tilelang-weft-bench list --kind targets
 ```
 
+The release includes `constraints.txt` to select TileLang `0.1.15+weft.2`, core
+`0.1.1`, shared engine `1.0.1` and this package `0.1.0`. Apply it with
+`pip install -c constraints.txt --find-links ./wheels tilelang tilelang-weft-bench`.
+
 `triton-weft-bench` is the shared measurement engine's distribution name. The
 TileLang workflow imports `weft_bench` and `tilelang_weft_bench`; its compiler is
 the installed TileLang–Weft package and shared `weft-core` SDK.
