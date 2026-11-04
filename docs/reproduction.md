@@ -26,6 +26,10 @@ Baseline indexes retain the original observations. When confirmed environmental
 drift requires pairing, execute only the affected reference through the same
 engine and keep its historical observation. Timing flags must match the selected
 reference record; existing K3 cohorts include different warmup counts.
+The example configuration permits up to two hours for each build or execution
+process. This budget includes source JIT and input preparation; it does not
+change the timed sample window. Read-only generated inputs are captured once
+and reused by cache verification and the native worker.
 
 Reuse successful observations with the existing comparison command:
 

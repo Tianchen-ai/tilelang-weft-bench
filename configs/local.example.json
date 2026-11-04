@@ -3,6 +3,7 @@
   "defaults": {
     "output_root": "output/current",
     "threads": 1,
+    "timeout": 7200,
     "record_environment": true,
     "default_implementations": {"op": ["tilelang"]},
     "env": {"OMP_NUM_THREADS": "1", "OMP_DYNAMIC": "FALSE"},
