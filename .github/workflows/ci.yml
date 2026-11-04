@@ -1,0 +1,33 @@
+name: Package and catalogs
+on: [push, pull_request]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - uses: actions/checkout@v4
+        with:
+          repository: Tianchen-ai/triton-weft-bench
+          ref: codex/tilelang-weft
+          path: .engine
+      - run: python -m pip install .engine . build
+      - run: tilelang-weft-bench list --kind targets
+      - name: Verify fixed suite membership and reference coverage
+        run: |
+          python - <<'PY'
+          from tilelang_weft_bench.catalogs import target_names, target_catalog
+          expected = {'sg2044': (133, 132), 'k1': (137, 136), 'k3-a100': (136, 135), 'x86-1t': (147, 140)}
+          unique = set()
+          for target in target_names():
+              catalog = target_catalog(target)
+              cases = catalog['cases']
+              assert (len(cases), sum(bool(c['reference']) for c in cases.values())) == expected[target]
+              assert set(catalog['suites']['full']) == set(cases)
+              assert all(c['candidate']['source'].startswith('module:tilelang.weft.kernels.') for c in cases.values())
+              unique.update(cases)
+          assert len(unique) == 150
+          PY
+      - run: python -m build

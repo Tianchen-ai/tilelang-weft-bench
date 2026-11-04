@@ -1,0 +1,3771 @@
+{
+  "q4_k_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q4_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_k_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q4_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "gemm_f32": {
+    "source": "module:tilelang.weft.kernels.linear",
+    "symbol": "matmul",
+    "constexprs": {
+      "M": 128,
+      "N": 256,
+      "K": 256,
+      "block_m": 8,
+      "block_n": 32,
+      "block_k": 32,
+      "cpu_num_threads": 1,
+      "transpose_weight": true
+    },
+    "grid": [
+      16,
+      8
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "A": "X",
+      "B": "W",
+      "C": "Y"
+    }
+  },
+  "q8_0_quantize": {
+    "source": "module:tilelang.weft.kernels.preparation",
+    "symbol": "quantize",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q8_0"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "X": "X",
+      "Output": "Y"
+    }
+  },
+  "q8_1_quantize": {
+    "source": "module:tilelang.weft.kernels.preparation",
+    "symbol": "quantize",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q8_1"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "X": "X",
+      "Output": "Y"
+    }
+  },
+  "q8_k_quantize": {
+    "source": "module:tilelang.weft.kernels.preparation",
+    "symbol": "quantize",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q8_K",
+      "extreme_policy": "extrema"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "X": "X",
+      "Output": "Y"
+    }
+  },
+  "iq1_m_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ1_M",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_m_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ1_M",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_s_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ1_S",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_s_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ1_S",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_s_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ2_S",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_s_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ2_S",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xs_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ2_XS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xs_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ2_XS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xxs_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ2_XXS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xxs_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ2_XXS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_s_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ3_S",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_s_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ3_S",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_xxs_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ3_XXS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_xxs_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ3_XXS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_nl_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ4_NL",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_nl_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ4_NL",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_xs_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ4_XS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_xs_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "IQ4_XS",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "mxfp4_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "MXFP4",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "mxfp4_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "MXFP4",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "nvfp4_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "NVFP4",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "nvfp4_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "NVFP4",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q1_0_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q1_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q1_0_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q1_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q2_k_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q2_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q2_k_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q2_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q3_k_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q3_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q3_k_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q3_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_0_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q4_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_0_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q4_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_1_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q4_1",
+      "activation": "Q8_1",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_1_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q4_1",
+      "activation": "Q8_1",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_k_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q4_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_k_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q4_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_0_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q5_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_0_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q5_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_1_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q5_1",
+      "activation": "Q8_1",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_1_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q5_1",
+      "activation": "Q8_1",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_k_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q5_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_k_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q5_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q6_k_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q6_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q6_k_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q6_K",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q8_0_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "Q8_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q8_0_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "Q8_0",
+      "activation": "Q8_0",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq1_0_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "TQ1_0",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq1_0_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "TQ1_0",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq2_0_dot": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "TQ2_0",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq2_0_dot_rows": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 4096,
+      "K": 4096,
+      "format": "TQ2_0",
+      "activation": "Q8_K",
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_m_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq1_m",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_s_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq1_s",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_s_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq2_s",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xs_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq2_indexed",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "IQ2_XS"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xxs_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq2_indexed",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "IQ2_XXS"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_s_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq3_s",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_xxs_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq3_xxs",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_nl_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize_iq4_nl",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_xs_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "iq4_xs",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "mxfp4_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "fp4",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "MXFP4"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "nvfp4_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "fp4",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "NVFP4"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q1_0_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q1_0"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q2_k_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q2_K"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q3_k_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q3_K"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_0_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q4_0"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_1_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q4_1"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_k_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q4_K"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_0_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q5_0"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_1_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q5_1"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_k_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q5_K"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q6_k_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q6_K"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q8_0_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "Q8_0"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq1_0_dequantize": {
+    "source": "module:tilelang.weft.kernels.codebook",
+    "symbol": "tq1_0",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq2_0_dequantize": {
+    "source": "module:tilelang.weft.kernels.quantized",
+    "symbol": "dequantize",
+    "constexprs": {
+      "M": 1024,
+      "K": 4096,
+      "rows": 1,
+      "format": "TQ2_0"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "f16_projection_decode": {
+    "source": "module:tilelang.weft.kernels.projection",
+    "symbol": "f16_projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Half": "Xh"
+    }
+  },
+  "f16_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.projection",
+    "symbol": "f16_projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Half": "Xh"
+    }
+  },
+  "iq1_m_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ1_M",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_m_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ1_M",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_s_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ1_S",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq1_s_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ1_S",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_s_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ2_S",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_s_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ2_S",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xs_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ2_XS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xs_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ2_XS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xxs_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ2_XXS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq2_xxs_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ2_XXS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_s_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ3_S",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_s_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ3_S",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_xxs_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ3_XXS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq3_xxs_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ3_XXS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_nl_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ4_NL",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_nl_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ4_NL",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_xs_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ4_XS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "iq4_xs_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "IQ4_XS",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "mxfp4_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "MXFP4",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "mxfp4_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "MXFP4",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "nvfp4_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "NVFP4",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "nvfp4_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "NVFP4",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q1_0_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q1_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q1_0_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q1_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q2_k_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q2_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q2_k_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q2_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q3_k_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q3_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q3_k_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q3_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_0_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q4_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_0_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q4_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_1_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q4_1",
+      "rows": 1,
+      "activation": "Q8_1",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q4_1_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q4_1",
+      "rows": 1,
+      "activation": "Q8_1",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_0_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q5_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_0_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q5_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_1_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q5_1",
+      "rows": 1,
+      "activation": "Q8_1",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_1_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q5_1",
+      "rows": 1,
+      "activation": "Q8_1",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_k_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q5_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q5_k_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q5_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q6_k_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q6_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q6_k_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q6_K",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q8_0_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q8_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "q8_0_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "Q8_0",
+      "rows": 1,
+      "activation": "Q8_0",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq1_0_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "TQ1_0",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq1_0_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "TQ1_0",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq2_0_projection_decode": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 1,
+      "N": 4096,
+      "K": 4096,
+      "format": "TQ2_0",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "tq2_0_projection_prefill": {
+    "source": "module:tilelang.weft.kernels.packed",
+    "symbol": "projection",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "K": 4096,
+      "format": "TQ2_0",
+      "rows": 1,
+      "activation": "Q8_K",
+      "extreme_policy": "extrema",
+      "inverse_policy": "reciprocal"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Quantized": "Xq",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "affine": {
+    "source": "module:tilelang.weft.kernels.activation",
+    "symbol": "affine",
+    "constexprs": {
+      "N": 4096,
+      "block": 128,
+      "cpu_num_threads": 1
+    },
+    "grid": [
+      32
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "rms_norm": {
+    "source": "module:tilelang.weft.kernels.normalization",
+    "symbol": "rms_norm",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "cpu_num_threads": 1,
+      "block": 32
+    },
+    "grid": [
+      128
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "layer_norm": {
+    "source": "module:tilelang.weft.kernels.normalization",
+    "symbol": "layer_norm",
+    "constexprs": {
+      "M": 128,
+      "N": 4096,
+      "cpu_num_threads": 1,
+      "block": 32
+    },
+    "grid": [
+      128
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "rope_split": {
+    "source": "module:tilelang.weft.kernels.attention",
+    "symbol": "rope",
+    "constexprs": {
+      "M": 128,
+      "H": 32,
+      "P": 64,
+      "cpu_num_threads": 1
+    },
+    "grid": [
+      128,
+      32
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {}
+  },
+  "softmax": {
+    "source": "module:tilelang.weft.kernels.attention",
+    "symbol": "softmax",
+    "constexprs": {
+      "M": 4096,
+      "N": 128,
+      "cpu_num_threads": 1
+    },
+    "grid": [
+      4096
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Grid": "grid",
+      "Signs": "signs",
+      "Codebook": "codebook",
+      "Scale": "scale",
+      "HalfBits": "f16_bits",
+      "Powers": "powers"
+    }
+  },
+  "rope_full": {
+    "source": "module:tilelang.weft.kernels.attention",
+    "symbol": "rope",
+    "constexprs": {
+      "M": 128,
+      "H": 32,
+      "P": 64,
+      "cpu_num_threads": 1
+    },
+    "grid": [
+      128,
+      32
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {}
+  },
+  "ime_centered": {
+    "source": "module:tilelang.weft.kernels.matrix",
+    "symbol": "ime",
+    "constexprs": {
+      "M": 4,
+      "N": 16,
+      "K": 4096,
+      "generation": 1,
+      "affine": false,
+      "tile_rows": 4,
+      "columns": 16,
+      "engine": "matrix"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {
+      "matrix_extension": "spacemit-ime1"
+    },
+    "arguments": {}
+  },
+  "ime_affine": {
+    "source": "module:tilelang.weft.kernels.matrix",
+    "symbol": "ime",
+    "constexprs": {
+      "M": 4,
+      "N": 16,
+      "K": 4096,
+      "generation": 1,
+      "affine": true,
+      "tile_rows": 4,
+      "columns": 16,
+      "engine": "matrix"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {
+      "matrix_extension": "spacemit-ime1"
+    },
+    "arguments": {}
+  },
+  "causal_attention": {
+    "source": "module:tilelang.weft.kernels.attention",
+    "symbol": "causal_attention",
+    "constexprs": {
+      "B": 1,
+      "Tokens": 4,
+      "Heads": 4,
+      "Groups": 2,
+      "D": 32,
+      "Capacity": 16
+    },
+    "grid": [
+      1,
+      4,
+      4
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {},
+    "arguments": {
+      "Query": "Q",
+      "Key": "K",
+      "Value": "V",
+      "Output": "Y"
+    }
+  },
+  "ime_centered_decode": {
+    "source": "module:tilelang.weft.kernels.matrix",
+    "symbol": "ime",
+    "constexprs": {
+      "M": 1,
+      "N": 16,
+      "K": 4096,
+      "generation": 1,
+      "affine": false,
+      "tile_rows": 1,
+      "columns": 16,
+      "engine": "matrix"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {
+      "matrix_extension": "spacemit-ime1"
+    },
+    "arguments": {}
+  },
+  "ime_affine_decode": {
+    "source": "module:tilelang.weft.kernels.matrix",
+    "symbol": "ime",
+    "constexprs": {
+      "M": 1,
+      "N": 16,
+      "K": 4096,
+      "generation": 1,
+      "affine": true,
+      "tile_rows": 1,
+      "columns": 16,
+      "engine": "matrix"
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
+    "backend_options": {
+      "matrix_extension": "spacemit-ime1"
+    },
+    "arguments": {}
+  }
+}

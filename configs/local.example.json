@@ -1,0 +1,67 @@
+{
+  "catalog_provider": "tilelang_weft_bench.catalogs",
+  "defaults": {
+    "output_root": "output/current",
+    "threads": 1,
+    "record_environment": true,
+    "default_implementations": {"op": ["tilelang"]},
+    "env": {"OMP_NUM_THREADS": "1", "OMP_DYNAMIC": "FALSE"},
+    "toolchain": {"cc": ["clang"], "cxx": ["clang++"]},
+    "ggml": {
+      "source": "/opt/bench-deps/llama.cpp",
+      "libraries": "/opt/bench-deps/llama-build/bin",
+      "compile_commands": "/opt/bench-deps/llama-build/compile_commands.json",
+      "projection_weights": "model-default"
+    },
+    "triton_runtime": {
+      "include": "/opt/tilelang-env/lib/python3.11/site-packages/weft_core/include",
+      "library": "/opt/tilelang-env/lib/python3.11/site-packages/weft_core/lib/libweft_runtime.so"
+    },
+    "implementations": {
+      "tilelang": {
+        "factory": "weft_bench.adapters.triton_jit:TileLangJitAdapter",
+        "python": "/opt/tilelang-env/bin/python",
+        "toolchain": {}
+      }
+    }
+  },
+  "targets": {
+    "x86-1t": {
+      "catalog": "x86-1t",
+      "target": {"architecture": "x86_64", "march": "sapphirerapids"},
+      "deployment": {"workspace": "output/workers/x86-1t", "cpus": [0]},
+      "quantization_contracts": {"q8_k": "first-absolute-max-rtne"},
+      "references": {
+        "openblas": {"include": "/opt/bench-deps/openblas/include", "library": "/opt/bench-deps/openblas/lib/libopenblas.so"},
+        "onednn": {"include": "/opt/bench-deps/onednn/include", "library": "/opt/bench-deps/onednn/lib/libdnnl.so", "threading": "omp"}
+      },
+      "baselines": {"operators": "output/baselines/x86-1t"}
+    },
+    "sg2044": {
+      "catalog": "sg2044",
+      "target": {"architecture": "riscv64", "march": "rv64gcv_zfh_zvfh", "vlen_bits": 128},
+      "deployment": {"host": "sg2044", "workspace": "/opt/tilelang-weft-bench/output/workers", "cpus": [0]},
+      "projection_activation_contracts": {"q8_k": "extrema-lo-rtne"},
+      "baselines": {"operators": "output/baselines/sg2044"}
+    },
+    "k1": {
+      "catalog": "k1",
+      "target": {"architecture": "riscv64", "march": "rv64gcv_zfh_zvfh", "vlen_bits": 256},
+      "deployment": {"host": "k1", "workspace": "/opt/tilelang-weft-bench/output/workers", "cpus": [0]},
+      "projection_activation_contracts": {"q8_k": "extrema-lo-rtne"},
+      "baselines": {"operators": "output/baselines/k1"}
+    },
+    "k3-a100": {
+      "catalog": "k3-a100",
+      "target": {"architecture": "riscv64", "march": "rv64gcv_zfh_zvfh", "vlen_bits": 1024},
+      "deployment": {
+        "host": "k3",
+        "workspace": "/opt/tilelang-weft-bench/output/workers",
+        "cpus": [8],
+        "launch_prefix": ["bash", "-c", "printf '%s' \"$$\" > /proc/set_ai_thread && exec \"$@\"", "weft-ai"]
+      },
+      "projection_activation_contracts": {"q8_k": "extrema-lo-rtne"},
+      "baselines": {"operators": "output/baselines/k3-a100"}
+    }
+  }
+}

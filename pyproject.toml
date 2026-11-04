@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tilelang-weft-bench"
+version = "0.1.0"
+description = "TileLang-Weft operator suites using the shared Weft Bench engine"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+dependencies = ["triton-weft-bench>=1.0.1,<1.1"]
+
+[project.optional-dependencies]
+plots = ["matplotlib>=3.8"]
+
+[project.urls]
+Source = "https://github.com/Tianchen-ai/tilelang-weft-bench"
+Issues = "https://github.com/Tianchen-ai/tilelang-weft-bench/issues"
+Documentation = "https://tianchen-ai.github.io/tilelang-weft-bench/"
+
+[project.scripts]
+tilelang-weft-bench = "tilelang_weft_bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+tilelang_weft_bench = ["catalogs/*.json", "catalogs/targets/*.json"]
