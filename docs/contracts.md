@@ -78,3 +78,6 @@ The speedup against GGML or another native library uses the matching native
 workload boundary. Python hot time is retained as a separate metric. The fixture
 checks that hot calls reuse the compiled kernel. Compiler work, input generation,
 numerical validation and output poisoning occur outside native timing.
+Python hot sampling uses a time budget derived from the requested batch time;
+long calls need fewer repeated samples. The CSV includes its actual sample count
+and protocol. Native warmup, sample counts and reference matching stay fixed.
