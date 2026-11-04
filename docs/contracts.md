@@ -70,6 +70,7 @@ records distinguish them.
 |---|---|
 | Cold compile and launch | First ordinary TileLang JIT invocation |
 | Disk-cache restoration | Fresh interpreter loading the same source specialization |
+| First in-process cache hit | Second invocation in the initial interpreter |
 | Python hot call | Cached factory invocation, binding, guards and native launch |
 | Native workload | Exported typed C ABI call, including declared preparation |
 | Native grid | Whole grid launcher, scheduling and synchronization |
@@ -81,3 +82,6 @@ numerical validation and output poisoning occur outside native timing.
 Python hot sampling uses a time budget derived from the requested batch time;
 long calls need fewer repeated samples. The CSV includes its actual sample count
 and protocol. Native warmup, sample counts and reference matching stay fixed.
+`disk_cache_restore_ms` measures the first JIT call in the fresh interpreter;
+`first_cache_hit_ms` measures the second call in the initial interpreter. Input
+preparation and Python process startup are outside both call windows.

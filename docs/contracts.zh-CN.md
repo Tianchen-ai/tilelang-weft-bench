@@ -57,6 +57,7 @@ decode 完整输出和 prefill 既有有界输出抽样保持原检查范围，�
 |---|---|
 | 冷编译与调用 | 第一次普通 TileLang JIT 调用 |
 | 磁盘缓存恢复 | 新解释器加载同一源码特化 |
+| 首次进程内缓存命中 | 初始解释器中的第二次调用 |
 | Python 热调用 | 缓存 factory 调用、参数绑定、guard 与原生启动 |
 | 原生 workload | 导出的 typed C ABI 调用，包含声明的准备工作 |
 | 原生 grid | 完整 grid launcher、调度与同步 |
@@ -65,3 +66,5 @@ decode 完整输出和 prefill 既有有界输出抽样保持原检查范围，�
 fixture 检查热调用复用同一编译 kernel。编译、输入生成、数值检查和输出污染在原生计时外。
 Python 热调用按所需 batch 时间形成采样预算，较长的调用减少重复次数。CSV 列出实际
 样本数和协议；原生测量的预热、样本数及参考匹配保持原合同。
+`disk_cache_restore_ms` 为新解释器中的第一次 JIT 调用；`first_cache_hit_ms` 为
+初始解释器中的第二次调用。输入准备与 Python 进程启动均不计入这两个调用窗口。

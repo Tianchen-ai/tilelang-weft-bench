@@ -15,7 +15,7 @@ from .catalogs import target_catalog, target_names
 FIELDS = (
     "target", "case", "shape", "scope", "status", "correctness", "native_us",
     "reference", "reference_us", "reference_speedup", "reference_match",
-    "triton_native_us", "triton_match", "cold_jit_ms", "first_cache_hit_ms",
+    "triton_native_us", "triton_match", "cold_jit_ms", "first_cache_hit_ms", "disk_cache_restore_ms",
     "python_hot_ms", "python_hot_samples", "python_hot_protocol", "disk_cache_hit", "same_compiled_kernel", "native_entry",
     "source", "symbol", "source_parameters", "backend_options", "binding_match", "used_extensions",
     "required_extensions", "selected_physical_engines", "target_arch", "target_vlen_bits",
@@ -79,7 +79,7 @@ def physical_evidence(metadata):
     return sorted(engines), sorted(families), resources
 
 
-def require_jit_evidence(row, runtime, cache):
+def require_jit_evidence(row, runtime, restored):
     label = f"{row.target}/{row.case}"
     checked = ("within-tolerance", "bit-exact", "sampled-64-exact")
     if not any(marker in row.correctness for marker in checked):
@@ -88,8 +88,12 @@ def require_jit_evidence(row, runtime, cache):
         marker in runtime.get("correctness", "") for marker in checked
     ):
         raise ValueError(f"missing source JIT numerical check: {label}")
+    cache = restored.get("compilations", [])
     if runtime.get("same_compiled_kernel") is not True or not cache or not all(item["cache_hit"] for item in cache):
         raise ValueError(f"missing source JIT/cache evidence: {label}")
+    restore_ms = restored.get("cold_compile_and_launch_ms")
+    if restored.get("status") != "ok" or restore_ms is None or not math.isfinite(restore_ms) or restore_ms <= 0:
+        raise ValueError(f"missing fresh-process disk-cache restoration: {label}")
     for metric in ("cold_compile_and_launch_ms", "first_cache_hit_launch_ms"):
         value = runtime.get(metric)
         if value is None or not math.isfinite(value) or value <= 0:
@@ -164,7 +168,7 @@ def records(runs, references, triton, *, partial):
             if not partial:
                 if row.median_ms is None or not math.isfinite(row.median_ms) or row.median_ms <= 0 or not row.samples_ms:
                     raise ValueError(f"missing native measurement: {target}/{name}")
-                require_jit_evidence(row, runtime, cache)
+                require_jit_evidence(row, runtime, jit.get("disk_cache", {}))
                 hot = jit.get("python_jit", {}).get("median_ms")
                 if hot is None or not math.isfinite(hot) or hot <= 0:
                     raise ValueError(f"missing Python hot measurement: {target}/{name}")
@@ -172,6 +176,7 @@ def records(runs, references, triton, *, partial):
             record.update(
                 cold_jit_ms=runtime.get("cold_compile_and_launch_ms", ""),
                 first_cache_hit_ms=runtime.get("first_cache_hit_launch_ms", ""),
+                disk_cache_restore_ms=jit.get("disk_cache", {}).get("cold_compile_and_launch_ms", ""),
                 python_hot_ms=jit.get("python_jit", {}).get("median_ms", ""),
                 python_hot_samples=len(runtime.get("samples_ms", [])),
                 python_hot_protocol=runtime.get("python_measurement", {}).get("protocol", jit.get("measurement", {}).get("protocol", "")),
