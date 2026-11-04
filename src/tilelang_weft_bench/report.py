@@ -206,6 +206,15 @@ def save(rows, destination):
     for target in target_names():
         group = [row for row in rows if row["target"] == target]
         ratios = [row["reference_speedup"] for row in group if row["reference_speedup"] != ""]
+        scopes = {}
+        for scope in sorted({row["scope"] for row in group}):
+            scoped = [row for row in group if row["scope"] == scope]
+            matched = [row["reference_speedup"] for row in scoped if row["reference_speedup"] != ""]
+            scopes[scope] = {
+                "formal": len(scoped), "executed_and_correct": sum(row["status"] == "ok" for row in scoped),
+                "matched_references": len(matched), "faster_than_reference": sum(value > 1 for value in matched),
+                "median_speedup": statistics.median(matched) if matched else None,
+            }
         summary[target] = {
             "formal": len(group), "statuses": dict(Counter(row["status"] for row in group)),
             "reference_matches": len(ratios), "reference_gaps": sum(row["reference_match"] == "catalog_gap" for row in group),
@@ -213,6 +222,7 @@ def save(rows, destination):
             "median_speedup": statistics.median(ratios) if ratios else None,
             "slowest": sorted(({"case": row["case"], "speedup": row["reference_speedup"]} for row in group
                                if row["reference_speedup"] != ""), key=lambda item: item["speedup"])[:10],
+            "by_scope": scopes,
         }
     (destination / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     complete = all(row["status"] == "ok" and row["reference_match"] in ("matched", "catalog_gap") for row in rows)
@@ -231,6 +241,17 @@ def save(rows, destination):
                "原生计算、冷 JIT、缓存恢复和 Python 热调用分别记录。"), "",
               ("The CSV retains numerical-check scope, source parameters, hardware decisions and reference gaps. "
                "CSV 保留数值检查范围、源码参数、硬件决定和参考缺口。"), ""]
+    for target, item in summary.items():
+        lines += [f"## {target}", "",
+                  "| Native workload boundary / 原生计算范围 | Correct / 正确 | Matched / 匹配 | Median / 中位数 |",
+                  "|---|---:|---:|---:|"]
+        for scope, scoped in item["by_scope"].items():
+            median = f"{scoped['median_speedup']:.4g}×" if scoped["median_speedup"] is not None else "—"
+            lines.append(f"| {scope} | {scoped['executed_and_correct']}/{scoped['formal']} | "
+                         f"{scoped['matched_references']} | {median} |")
+        lines += ["", "Slowest matched cases / 最慢的匹配用例：", ""]
+        lines.extend(f"- `{row['case']}`: {row['speedup']:.4g}×" for row in item["slowest"])
+        lines.append("")
     (destination / "summary.md").write_text("\n".join(lines))
     return summary
 
