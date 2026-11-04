@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 
 from weft_bench.results import apply_baselines, contracts_match, read
+from weft_bench.output import OutputRun
 
 from .catalogs import target_catalog, target_names
 
@@ -297,10 +298,16 @@ def main():
     parser.add_argument("--partial", action="store_true", help="retain missing/failed rows as explicit incomplete states")
     parser.add_argument("--plot", action="store_true")
     args = parser.parse_args()
-    rows = records(mapping(args.run), mapping(args.reference), mapping(args.triton), partial=args.partial)
-    summary = save(rows, args.output)
-    if args.plot:
-        plot(rows, args.output)
+    output = OutputRun(args.output)
+    try:
+        rows = records(mapping(args.run), mapping(args.reference), mapping(args.triton), partial=args.partial)
+        summary = save(rows, output.stage)
+        if args.plot:
+            plot(rows, output.stage)
+    except Exception as error:
+        output.finish(error=error)
+        raise
+    output.finish()
     print(json.dumps(summary, indent=2))
 
 
