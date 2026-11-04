@@ -22,7 +22,9 @@ tilelang-weft-bench op --suite full --target k3-a100 --config .local/bench.local
 
 固定参考包含明确的库版本和匹配测量合同，baseline 索引保留原始观察。
 确认环境漂移后，只通过同一引擎配对补测受影响参考，历史记录继续保留。
-计时参数与选中参考记录一致；既有 K3 参考分组包含不同 warmup 次数。
+计时参数与选中参考记录一致。版本控制中的 catalog 保存既有 K3 的不同预热次数，
+以及 K3 I4 affine、x86 AMX Q6_K prefill 所需的 200 ms 预热。`show CASE` 展示
+解析后的计时参数。单项与 `full` 自动使用这些参数；显式计时选项覆盖对应字段。
 示例配置允许每个构建或执行进程最多运行两小时。这个等待上限包含源码 JIT 和
 输入准备，不改变样本计时窗口。生成的只读输入保存一次，由缓存验证和原生 worker
 复用。

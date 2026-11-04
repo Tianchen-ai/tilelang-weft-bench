@@ -1,0 +1,158 @@
+{
+  "defaults": {
+    "batch_ms": 10.0,
+    "cache": "reuse",
+    "eviction_bytes": 67108864,
+    "sample_order": "serial",
+    "samples": 5,
+    "warmup": 3,
+    "warmup_ms": 0.0
+  },
+  "targets": {
+    "k1": {},
+    "k3-a100": {
+      "ime2_i4_affine_prefill": {
+        "samples": 15,
+        "warmup_ms": 200.0
+      },
+      "iq1_s_projection_decode": {
+        "warmup": 1
+      },
+      "iq1_s_projection_prefill": {
+        "warmup": 1
+      },
+      "iq2_s_projection_decode": {
+        "warmup": 1
+      },
+      "iq2_s_projection_prefill": {
+        "warmup": 1
+      },
+      "iq2_xs_projection_decode": {
+        "warmup": 1
+      },
+      "iq2_xs_projection_prefill": {
+        "warmup": 1
+      },
+      "iq2_xxs_projection_decode": {
+        "warmup": 1
+      },
+      "iq2_xxs_projection_prefill": {
+        "warmup": 1
+      },
+      "iq3_s_projection_decode": {
+        "warmup": 1
+      },
+      "iq3_s_projection_prefill": {
+        "warmup": 1
+      },
+      "iq3_xxs_projection_decode": {
+        "warmup": 1
+      },
+      "iq3_xxs_projection_prefill": {
+        "warmup": 1
+      },
+      "iq4_nl_projection_decode": {
+        "warmup": 1
+      },
+      "iq4_nl_projection_prefill": {
+        "warmup": 1
+      },
+      "iq4_xs_projection_decode": {
+        "warmup": 1
+      },
+      "iq4_xs_projection_prefill": {
+        "warmup": 1
+      },
+      "mxfp4_projection_decode": {
+        "warmup": 1
+      },
+      "mxfp4_projection_prefill": {
+        "warmup": 1
+      },
+      "nvfp4_projection_decode": {
+        "warmup": 1
+      },
+      "nvfp4_projection_prefill": {
+        "warmup": 1
+      },
+      "q1_0_projection_decode": {
+        "warmup": 1
+      },
+      "q1_0_projection_prefill": {
+        "warmup": 1
+      },
+      "q2_k_projection_decode": {
+        "warmup": 1
+      },
+      "q2_k_projection_prefill": {
+        "warmup": 1
+      },
+      "q3_k_projection_decode": {
+        "warmup": 1
+      },
+      "q3_k_projection_prefill": {
+        "warmup": 1
+      },
+      "q4_0_projection_decode": {
+        "warmup": 1
+      },
+      "q4_0_projection_prefill": {
+        "warmup": 1
+      },
+      "q4_1_projection_decode": {
+        "warmup": 1
+      },
+      "q4_1_projection_prefill": {
+        "warmup": 1
+      },
+      "q5_0_projection_decode": {
+        "warmup": 1
+      },
+      "q5_0_projection_prefill": {
+        "warmup": 1
+      },
+      "q5_1_projection_decode": {
+        "warmup": 1
+      },
+      "q5_1_projection_prefill": {
+        "warmup": 1
+      },
+      "q5_k_projection_decode": {
+        "warmup": 1
+      },
+      "q5_k_projection_prefill": {
+        "warmup": 1
+      },
+      "q6_k_projection_decode": {
+        "warmup": 1
+      },
+      "q6_k_projection_prefill": {
+        "warmup": 1
+      },
+      "q8_0_projection_decode": {
+        "warmup": 1
+      },
+      "q8_0_projection_prefill": {
+        "warmup": 1
+      },
+      "tq1_0_projection_decode": {
+        "warmup": 1
+      },
+      "tq1_0_projection_prefill": {
+        "warmup": 1
+      },
+      "tq2_0_projection_decode": {
+        "warmup": 1
+      },
+      "tq2_0_projection_prefill": {
+        "warmup": 1
+      }
+    },
+    "sg2044": {},
+    "x86-1t": {
+      "amx_q6_k_prefill_strided": {
+        "warmup_ms": 200.0
+      }
+    }
+  }
+}

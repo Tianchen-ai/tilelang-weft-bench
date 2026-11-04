@@ -16,10 +16,15 @@ ROOT = Path(__file__).parent
 def target_catalog(name):
     selected = reference_catalog(name)
     bindings = json.loads((ROOT / "targets" / (name + ".json")).read_text())
+    protocols = json.loads((ROOT / "measurement.json").read_text())
+    overrides = protocols["targets"][name]
     if set(bindings) != set(selected["cases"]):
         raise ValueError("TileLang bindings differ from the fixed workload catalog")
+    if set(overrides) - set(selected["cases"]):
+        raise ValueError("timing policy names are outside the formal workload catalog")
     for case, record in selected["cases"].items():
         record["candidate"] = bindings[case]
+        record["measurement"] = {**protocols["defaults"], **overrides.get(case, {})}
         record["artifact_evidence"] = {"used_extensions": [], "matrix_in_artifact": False,
                                        "runtime_instruction_path": "not_observed"}
     selected.pop("implementations", None)

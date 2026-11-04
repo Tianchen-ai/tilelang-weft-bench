@@ -19,6 +19,7 @@ jobs:
         run: |
           python - <<'PY'
           from tilelang_weft_bench.catalogs import target_names, target_catalog
+          from weft_bench.operators import case_measurement
           expected = {'sg2044': (133, 132), 'k1': (137, 136), 'k3-a100': (136, 135), 'x86-1t': (147, 140)}
           unique = set()
           for target in target_names():
@@ -27,7 +28,15 @@ jobs:
               assert (len(cases), sum(bool(c['reference']) for c in cases.values())) == expected[target]
               assert set(catalog['suites']['full']) == set(cases)
               assert all(c['candidate']['source'].startswith('module:tilelang.weft.kernels.') for c in cases.values())
+              settings = {'case_measurements': {name: c['measurement'] for name, c in cases.items()}}
+              for name in cases:
+                  case_measurement(settings, name, {})
               unique.update(cases)
           assert len(unique) == 150
+          k3 = target_catalog('k3-a100')['cases']
+          assert k3['iq1_s_projection_prefill']['measurement']['warmup'] == 1
+          assert k3['ime2_i4_affine_prefill']['measurement']['warmup_ms'] == 200
+          assert k3['ime2_i4_affine_prefill']['measurement']['samples'] == 15
+          assert target_catalog('x86-1t')['cases']['amx_q6_k_prefill_strided']['measurement']['warmup_ms'] == 200
           PY
       - run: python -m build

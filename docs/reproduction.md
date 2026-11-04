@@ -25,7 +25,11 @@ A fixed reference is a versioned library and a matching measurement contract.
 Baseline indexes retain the original observations. When confirmed environmental
 drift requires pairing, execute only the affected reference through the same
 engine and keep its historical observation. Timing flags must match the selected
-reference record; existing K3 cohorts include different warmup counts.
+reference record. The versioned catalog records the existing K3 warmup cohorts
+and the 200 ms warmup required by K3 I4 affine and x86 AMX Q6_K prefill.
+`show CASE` displays the resolved measurement options. Single-case and `full`
+commands use them automatically; explicit timing flags override the corresponding
+options.
 The example configuration permits up to two hours for each build or execution
 process. This budget includes source JIT and input preparation; it does not
 change the timed sample window. Read-only generated inputs are captured once

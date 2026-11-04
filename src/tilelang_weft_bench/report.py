@@ -20,7 +20,7 @@ FIELDS = (
     "source", "symbol", "source_parameters", "backend_options", "binding_match", "used_extensions",
     "required_extensions", "selected_physical_engines", "target_arch", "target_vlen_bits",
     "instruction_path", "instruction_families", "resource_analysis", "runtime_cpus", "tilelang_version",
-    "warmup", "batch_ms", "sample_count", "numerical_check_scope",
+    "warmup", "warmup_ms", "batch_ms", "sample_count", "data_cache", "sample_order", "native_protocol", "numerical_check_scope",
 )
 
 
@@ -188,7 +188,9 @@ def records(runs, references, triton, *, partial):
                 instruction_path=row.details.get("runtime_instruction_path", "not_observed"),
                 runtime_cpus=json.dumps(runtime.get("cpus", [])),
                 tilelang_version=runtime.get("tilelang", ""),
-                warmup=measure.get("warmup", ""), batch_ms=measure.get("batch_ms", ""),
+                warmup=measure.get("warmup", ""), warmup_ms=measure.get("warmup_ms", 0.0),
+                batch_ms=measure.get("batch_ms", ""), data_cache=measure.get("cache", ""),
+                sample_order=measure.get("sample_order", "serial"), native_protocol=measure.get("protocol", ""),
                 sample_count=len(row.samples_ms),
                 numerical_check_scope=row.correctness,
                 selected_physical_engines=json.dumps(engines),
