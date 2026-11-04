@@ -3,6 +3,7 @@
 import argparse
 import csv
 import json
+import math
 import statistics
 from collections import Counter
 from pathlib import Path
@@ -17,7 +18,8 @@ FIELDS = (
     "triton_native_us", "triton_match", "cold_jit_ms", "first_cache_hit_ms",
     "python_hot_ms", "disk_cache_hit", "same_compiled_kernel", "native_entry",
     "source", "symbol", "source_parameters", "backend_options", "used_extensions",
-    "required_extensions", "instruction_path", "runtime_cpus", "tilelang_version",
+    "required_extensions", "selected_physical_engines", "target_arch", "target_vlen_bits",
+    "instruction_path", "runtime_cpus", "tilelang_version",
     "warmup", "batch_ms", "sample_count", "numerical_check_scope",
 )
 
@@ -68,6 +70,7 @@ def records(runs, references, triton, *, partial):
             record = dict.fromkeys(FIELDS, "")
             record.update(target=target, case=name, shape=json.dumps(selected["shape"], sort_keys=True),
                           scope=selected["scope"], status="not_executed", reference=selected["reference"] or "",
+                          reference_match="unmatched" if selected["reference"] else "catalog_gap",
                           source=candidate["source"], symbol=candidate["symbol"],
                           source_parameters=json.dumps(candidate.get("constexprs", {}), sort_keys=True),
                           backend_options=json.dumps(candidate.get("backend_options", {}), sort_keys=True))
@@ -103,6 +106,14 @@ def records(runs, references, triton, *, partial):
             cache = jit.get("disk_cache", {}).get("compilations", [])
             measure = row.details.get("measurement", {})
             metadata = artifact_metadata(row) if row.status == "ok" else {}
+            if not partial:
+                if row.median_ms is None or not math.isfinite(row.median_ms) or row.median_ms <= 0 or not row.samples_ms:
+                    raise ValueError(f"missing native measurement: {target}/{name}")
+                if runtime.get("same_compiled_kernel") is not True or not cache or not all(item["cache_hit"] for item in cache):
+                    raise ValueError(f"missing source JIT/cache evidence: {target}/{name}")
+                hot = jit.get("python_jit", {}).get("median_ms")
+                if hot is None or not math.isfinite(hot) or hot <= 0:
+                    raise ValueError(f"missing Python hot measurement: {target}/{name}")
             record.update(
                 cold_jit_ms=runtime.get("cold_compile_and_launch_ms", ""),
                 first_cache_hit_ms=runtime.get("first_cache_hit_launch_ms", ""),
@@ -117,7 +128,14 @@ def records(runs, references, triton, *, partial):
                 tilelang_version=runtime.get("tilelang", ""),
                 warmup=measure.get("warmup", ""), batch_ms=measure.get("batch_ms", ""),
                 sample_count=len(row.samples_ms),
-                numerical_check_scope=json.dumps(runtime.get("correctness", row.correctness)),
+                numerical_check_scope=row.correctness,
+                selected_physical_engines=json.dumps(sorted({
+                    operation["engine"]
+                    for operation in row.details.get("physical_program", {}).get("physical_operations", {}).get("operations", [])
+                    if operation.get("engine")
+                })),
+                target_arch=metadata.get("target", {}).get("arch", ""),
+                target_vlen_bits=metadata.get("target", {}).get("vlen_bits", ""),
             )
             output.append(record)
     return output
