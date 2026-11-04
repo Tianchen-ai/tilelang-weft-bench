@@ -197,6 +197,23 @@ def save(rows, destination):
                                if row["reference_speedup"] != ""), key=lambda item: item["speedup"])[:10],
         }
     (destination / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    complete = all(row["status"] == "ok" and row["reference_match"] in ("matched", "catalog_gap") for row in rows)
+    lines = ["# TileLang–Weft operator comparison / 算子对比", "",
+             "Status / 状态: " + ("complete / 完成" if complete else "in progress / 进行中"), "",
+             ("Speedup is matched native reference time divided by TileLang native time. "
+              "倍率为匹配原生参考耗时除以 TileLang 原生耗时。"), "",
+             "| Target / 平台 | Correct / 正确 | Matched references / 匹配参考 | Faster / 更快 | Median / 倍率中位数 |",
+             "|---|---:|---:|---:|---:|"]
+    for target, item in summary.items():
+        median = f"{item['median_speedup']:.4g}×" if item["median_speedup"] is not None else "—"
+        lines.append(f"| {target} | {item['statuses'].get('ok', 0)}/{item['formal']} | "
+                     f"{item['reference_matches']} | {item['faster_than_reference']} | {median} |")
+    lines += ["", "[Full operator CSV / 完整算子表](operators.csv)", "",
+              ("Native computation, cold JIT, cache restoration and Python hot calls have separate columns. "
+               "原生计算、冷 JIT、缓存恢复和 Python 热调用分别记录。"), "",
+              ("The CSV retains numerical-check scope, source parameters, hardware decisions and reference gaps. "
+               "CSV 保留数值检查范围、源码参数、硬件决定和参考缺口。"), ""]
+    (destination / "summary.md").write_text("\n".join(lines))
     return summary
 
 
