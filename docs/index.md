@@ -26,15 +26,24 @@ package is `tilelang`; the Bench command is `tilelang-weft-bench`.
 
 ## Install
 
-Download the matching wheels from [Releases](https://github.com/Tianchen-ai/tilelang-weft-bench/releases).
-Install CPU PyTorch for the execution host, then install the product and Bench:
+Download the coordinated compiler and Bench assets. Pip selects the wheel
+matching the current Python ABI and host architecture from this directory:
 
 ```sh
-python -m pip install --find-links ./wheels ./wheels/weft_core-*.whl \
-  ./wheels/tilelang-*.whl ./wheels/triton_weft_bench-*.whl \
-  ./wheels/tilelang_weft_bench-*.whl
+gh release download v0.1.15-weft.2 --repo Tianchen-ai/tilelang-weft \
+  --pattern '*.whl' --dir wheels
+gh release download v0.1.0 --repo Tianchen-ai/tilelang-weft-bench \
+  --pattern '*.whl' --pattern constraints.txt --dir wheels
+python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
+  tilelang tilelang-weft-bench
 tilelang-weft-bench list --kind targets
 ```
+
+Install CPU PyTorch for the execution host before these commands. On x86, a
+clean virtual environment can use
+`python -m pip install torch --index-url https://download.pytorch.org/whl/cpu`.
+RISC-V uses its platform's CPU PyTorch package. GitHub's release pages also
+provide the assets as individual downloads.
 
 The release includes `constraints.txt` to select TileLang `0.1.15+weft.2`, core
 `0.1.1`, shared engine `1.0.1` and this package `0.1.0`. Apply it with

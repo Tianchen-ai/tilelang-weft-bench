@@ -15,15 +15,23 @@
 
 ## 安装
 
-从 [Releases](https://github.com/Tianchen-ai/tilelang-weft-bench/releases) 下载适配的 wheel。
-先为执行主机安装 CPU PyTorch，再安装编译器与 Bench：
+下载配套编译器和 Bench 资产。Pip 从目录中选择匹配当前 Python ABI 与宿主架构的
+wheel：
 
 ```sh
-python -m pip install --find-links ./wheels ./wheels/weft_core-*.whl \
-  ./wheels/tilelang-*.whl ./wheels/triton_weft_bench-*.whl \
-  ./wheels/tilelang_weft_bench-*.whl
+gh release download v0.1.15-weft.2 --repo Tianchen-ai/tilelang-weft \
+  --pattern '*.whl' --dir wheels
+gh release download v0.1.0 --repo Tianchen-ai/tilelang-weft-bench \
+  --pattern '*.whl' --pattern constraints.txt --dir wheels
+python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
+  tilelang tilelang-weft-bench
 tilelang-weft-bench list --kind targets
 ```
+
+执行上述命令前，先为主机安装 CPU PyTorch。x86 干净虚拟环境可用
+`python -m pip install torch --index-url https://download.pytorch.org/whl/cpu`；
+RISC-V 使用对应平台的 CPU PyTorch 包。也可以直接从 GitHub Release 页面逐个下载
+资产。
 
 `triton-weft-bench` 是共用测量引擎的发行名称。TileLang 路径导入 `weft_bench` 与
 `tilelang_weft_bench`，使用已安装的 TileLang–Weft 和共享 `weft-core` SDK 编译。
