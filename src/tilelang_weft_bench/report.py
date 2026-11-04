@@ -79,6 +79,23 @@ def physical_evidence(metadata):
     return sorted(engines), sorted(families), resources
 
 
+def require_jit_evidence(row, runtime, cache):
+    label = f"{row.target}/{row.case}"
+    checked = ("within-tolerance", "bit-exact", "sampled-64-exact")
+    if not any(marker in row.correctness for marker in checked):
+        raise ValueError(f"missing native numerical check: {label}")
+    if runtime.get("status") != "ok" or not any(
+        marker in runtime.get("correctness", "") for marker in checked
+    ):
+        raise ValueError(f"missing source JIT numerical check: {label}")
+    if runtime.get("same_compiled_kernel") is not True or not cache or not all(item["cache_hit"] for item in cache):
+        raise ValueError(f"missing source JIT/cache evidence: {label}")
+    for metric in ("cold_compile_and_launch_ms", "first_cache_hit_launch_ms"):
+        value = runtime.get(metric)
+        if value is None or not math.isfinite(value) or value <= 0:
+            raise ValueError(f"missing {metric}: {label}")
+
+
 def records(runs, references, triton, *, partial):
     output = []
     for target in target_names():
@@ -147,8 +164,7 @@ def records(runs, references, triton, *, partial):
             if not partial:
                 if row.median_ms is None or not math.isfinite(row.median_ms) or row.median_ms <= 0 or not row.samples_ms:
                     raise ValueError(f"missing native measurement: {target}/{name}")
-                if runtime.get("same_compiled_kernel") is not True or not cache or not all(item["cache_hit"] for item in cache):
-                    raise ValueError(f"missing source JIT/cache evidence: {target}/{name}")
+                require_jit_evidence(row, runtime, cache)
                 hot = jit.get("python_jit", {}).get("median_ms")
                 if hot is None or not math.isfinite(hot) or hot <= 0:
                     raise ValueError(f"missing Python hot measurement: {target}/{name}")
