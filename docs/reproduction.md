@@ -55,6 +55,8 @@ are identified before interpreting a difference from Triton.
 Generate the presentation table from explicitly selected runs and fixed references:
 
 ```sh
+python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
+  'tilelang-weft-bench[plots]'
 python -m tilelang_weft_bench.report \
   --run sg2044=output/current/sg2044/selected --reference sg2044=output/baselines/sg2044 \
   --run k1=output/current/k1/selected --reference k1=output/baselines/k1 \
@@ -62,6 +64,9 @@ python -m tilelang_weft_bench.report \
   --run x86-1t=output/current/x86-1t/selected --reference x86-1t=output/baselines/x86-1t \
   --triton x86-1t=output/comparisons/x86-1t --plot --output output/reports/latest
 ```
+
+The plotting extra is needed on the report host. Execution hosts use the ordinary
+Bench package.
 
 Final reporting rejects incomplete JIT/cache/hot-call evidence, missing native
 samples and unmatched required references. `--partial` retains incomplete rows

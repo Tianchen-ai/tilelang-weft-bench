@@ -47,6 +47,8 @@ JIT 指标。数值检查记录说明完整检查与抽样检查的实际范围�
 从显式选定的结果和固定参考生成展示表：
 
 ```sh
+python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
+  'tilelang-weft-bench[plots]'
 python -m tilelang_weft_bench.report \
   --run sg2044=output/current/sg2044/selected --reference sg2044=output/baselines/sg2044 \
   --run k1=output/current/k1/selected --reference k1=output/baselines/k1 \
@@ -54,6 +56,8 @@ python -m tilelang_weft_bench.report \
   --run x86-1t=output/current/x86-1t/selected --reference x86-1t=output/baselines/x86-1t \
   --triton x86-1t=output/comparisons/x86-1t --plot --output output/reports/latest
 ```
+
+绘图扩展安装在报告主机；执行机使用普通 Bench 包即可。
 
 正式汇总拒绝缺少 JIT／缓存／热调用证据、native 样本或必要参考的记录。
 开发时 `--partial` 明确保留不完整状态。projection prefill 沿用 64 个输出抽样，
