@@ -264,6 +264,57 @@ def save(rows, destination):
     return summary
 
 
+def public_observations(runs, references, destination):
+    """Publish original samples without machine-private paths or replay inputs."""
+    observations = []
+
+    def retained(row):
+        details = row.details
+        execution = details.get("execution", {})
+        environment = execution.get("env", {})
+        return {
+            **{key: getattr(row, key) for key in (
+                "case", "implementation", "target", "shape", "scope", "status",
+                "correctness", "median_ms", "samples_ms",
+            )},
+            "measurement": details.get("measurement", {}),
+            "input_policy": details.get("input_policy"),
+            "dtype": details.get("dtype"), "phase": details.get("phase"),
+            "execution": {
+                "cpus": execution.get("cpus", []), "threads": execution.get("threads"),
+                "isa": execution.get("isa", {}),
+                "memory_nodes": execution.get("numa", {}).get("memory_nodes", []),
+                "environment": {key: environment[key] for key in (
+                    "OMP_NUM_THREADS", "OMP_DYNAMIC", "ONEDNN_VERBOSE", "DNNL_VERBOSE",
+                ) if key in environment},
+            },
+            "frequency_policies": [
+                {"cpu": item["cpu"], "frequency_policy": item["frequency_policy"]}
+                for item in details.get("observed_environment", {}).get("affinity", [])
+                if item.get("frequency_policy")
+            ],
+        }
+
+    for target, path in runs.items():
+        catalog = target_catalog(target)["cases"]
+        baseline = read(references[target]) if target in references else []
+        for name, row in observation_index(path).items():
+            entry = {"tilelang": retained(row)}
+            selected = catalog[name]
+            if selected["reference"]:
+                matches = [item for item in baseline if item.implementation == selected["reference"]
+                           and item.status == "ok" and contracts_match(row, item)]
+                if len(matches) != 1:
+                    raise ValueError(f"public samples require one matched reference: {target}/{name}")
+                entry["reference"] = retained(matches[0])
+            observations.append(entry)
+    (destination / "observations.json").write_text(json.dumps({
+        "schema": 1,
+        "scope": "original measured samples; private execution paths omitted; presentation export",
+        "observations": observations,
+    }, indent=2) + "\n")
+
+
 def plot(rows, destination):
     import matplotlib
     matplotlib.use("Agg")
@@ -304,8 +355,11 @@ def main():
     args = parser.parse_args()
     output = OutputRun(args.output)
     try:
-        rows = records(mapping(args.run), mapping(args.reference), mapping(args.triton), partial=args.partial)
+        runs, references = mapping(args.run), mapping(args.reference)
+        rows = records(runs, references, mapping(args.triton), partial=args.partial)
         summary = save(rows, output.stage)
+        if not args.partial:
+            public_observations(runs, references, output.stage)
         if args.plot:
             plot(rows, output.stage)
     except Exception as error:
