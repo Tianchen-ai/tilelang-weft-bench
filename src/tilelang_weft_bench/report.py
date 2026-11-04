@@ -17,9 +17,9 @@ FIELDS = (
     "reference", "reference_us", "reference_speedup", "reference_match",
     "triton_native_us", "triton_match", "cold_jit_ms", "first_cache_hit_ms",
     "python_hot_ms", "disk_cache_hit", "same_compiled_kernel", "native_entry",
-    "source", "symbol", "source_parameters", "backend_options", "used_extensions",
+    "source", "symbol", "source_parameters", "backend_options", "binding_match", "used_extensions",
     "required_extensions", "selected_physical_engines", "target_arch", "target_vlen_bits",
-    "instruction_path", "runtime_cpus", "tilelang_version",
+    "instruction_path", "instruction_families", "resource_analysis", "runtime_cpus", "tilelang_version",
     "warmup", "batch_ms", "sample_count", "numerical_check_scope",
 )
 
@@ -53,6 +53,30 @@ def artifact_metadata(row):
     if not filename.is_file():
         raise FileNotFoundError(filename)
     return json.loads(filename.read_text())
+
+
+def source_request(row):
+    location = row.details.get("jit", {}).get("diagnostics")
+    if not location:
+        raise ValueError(f"missing source JIT diagnostics: {row.target}/{row.case}")
+    return json.loads((Path(location) / "jit-request.json").read_text())
+
+
+def physical_evidence(metadata):
+    abi = metadata.get("kernel_abi", {})
+    compilation = metadata.get("compilation", {})
+    operations = abi.get("physical_operations", {}).get("operations", [])
+    contractions = compilation.get("contractions", [])
+    engines = {operation["engine"] for operation in operations if operation.get("engine")}
+    engines.update(operation["selected_engine"] for operation in contractions if operation.get("selected_engine"))
+    families = {operation["instruction_family"] for operation in contractions if operation.get("instruction_family")}
+    resources = {key: value for key, value in (
+        ("physical_resources", abi.get("physical_resources")),
+        ("target_resources", compilation.get("target_resources")),
+        ("local_storage", compilation.get("local_storage")),
+        ("scope", compilation.get("resource_estimate_scope")),
+    ) if value is not None}
+    return sorted(engines), sorted(families), resources
 
 
 def records(runs, references, triton, *, partial):
@@ -106,6 +130,20 @@ def records(runs, references, triton, *, partial):
             cache = jit.get("disk_cache", {}).get("compilations", [])
             measure = row.details.get("measurement", {})
             metadata = artifact_metadata(row) if row.status == "ok" else {}
+            if row.status == "ok":
+                request = source_request(row)
+                binding_match = (
+                    "module:" + request["source_module"] == candidate["source"]
+                    and request["symbol"] == candidate["symbol"]
+                    and request["constexprs"] == candidate.get("constexprs", {})
+                    and request["backend_options"] == candidate.get("backend_options", {})
+                )
+                record.update(source="module:" + request["source_module"], symbol=request["symbol"],
+                              source_parameters=json.dumps(request["constexprs"], sort_keys=True),
+                              backend_options=json.dumps(request["backend_options"], sort_keys=True),
+                              binding_match=binding_match)
+                if not binding_match and not partial:
+                    raise ValueError(f"executed binding differs from formal selection: {target}/{name}")
             if not partial:
                 if row.median_ms is None or not math.isfinite(row.median_ms) or row.median_ms <= 0 or not row.samples_ms:
                     raise ValueError(f"missing native measurement: {target}/{name}")
@@ -114,6 +152,7 @@ def records(runs, references, triton, *, partial):
                 hot = jit.get("python_jit", {}).get("median_ms")
                 if hot is None or not math.isfinite(hot) or hot <= 0:
                     raise ValueError(f"missing Python hot measurement: {target}/{name}")
+            engines, families, resources = physical_evidence(metadata)
             record.update(
                 cold_jit_ms=runtime.get("cold_compile_and_launch_ms", ""),
                 first_cache_hit_ms=runtime.get("first_cache_hit_launch_ms", ""),
@@ -129,11 +168,9 @@ def records(runs, references, triton, *, partial):
                 warmup=measure.get("warmup", ""), batch_ms=measure.get("batch_ms", ""),
                 sample_count=len(row.samples_ms),
                 numerical_check_scope=row.correctness,
-                selected_physical_engines=json.dumps(sorted({
-                    operation["engine"]
-                    for operation in row.details.get("physical_program", {}).get("physical_operations", {}).get("operations", [])
-                    if operation.get("engine")
-                })),
+                selected_physical_engines=json.dumps(engines),
+                instruction_families=json.dumps(families),
+                resource_analysis=json.dumps(resources, sort_keys=True),
                 target_arch=metadata.get("target", {}).get("arch", ""),
                 target_vlen_bits=metadata.get("target", {}).get("vlen_bits", ""),
             )

@@ -41,6 +41,10 @@ CSV 的 `used_extensions`、`required_extensions` 表示产物的附加扩展合
 展示；附加扩展列表为空不能解释为标量执行。`instruction_path=not_observed`
 明确保留条件指令路径尚未观察的状态。
 
+导出的编译 metadata 提供所选 engine、指令类别和资源分析。CSV 从每项保留的
+JIT request 读取源码参数与物理配置，并核对正式 catalog 绑定。用例名称中的
+`amx` 或 `ime` 不能代替实际产物证据。
+
 K3 A100 必须先注册 PID，再设置 affinity。A100 核组为 VLEN1024，X100 为 VLEN256。
 目标探测检查实际执行核心。同一机器同时只运行一组性能队列。
 

@@ -49,6 +49,12 @@ by `selected_physical_engines`, target architecture and VLEN; an empty additiona
 extension list does not imply scalar execution. `instruction_path=not_observed`
 keeps conditional runtime instruction coverage explicit.
 
+The exported compiler metadata supplies the selected engines, instruction
+families and resource analysis. The CSV reads source parameters and physical
+options from each retained JIT request and checks them against the formal
+catalog binding. A case name containing `amx` or `ime` does not replace this
+artifact evidence.
+
 K3 A100 requires PID registration before CPU affinity. Its A100 group uses
 VLEN1024; X100 uses VLEN256. The target probe checks the selected execution core.
 One target machine runs one performance queue at a time.
