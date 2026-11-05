@@ -10,6 +10,8 @@ contracts
 contracts.zh-CN
 reproduction
 reproduction.zh-CN
+results
+results.zh-CN
 :::
 
 This package selects native TileLang programs for the shared Weft Bench engine.
@@ -79,3 +81,6 @@ exported by that successful invocation, with the same input contract.
 Read [contracts](contracts.md) to identify the author program and counted work,
 then [reproduction](reproduction.md) for full suites, fixed references and result
 interpretation.
+
+The [operator results](results.md) present native ratios, JIT metrics, numerical
+coverage and source-level explanations of the measured performance gaps.

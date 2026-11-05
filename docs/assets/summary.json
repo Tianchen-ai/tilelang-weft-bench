@@ -1,0 +1,659 @@
+{
+  "k1": {
+    "formal": 137,
+    "statuses": {
+      "ok": 137
+    },
+    "reference_matches": 136,
+    "reference_gaps": 1,
+    "faster_than_reference": 9,
+    "median_speedup": 0.11430033953997737,
+    "slowest": [
+      {
+        "case": "iq1_m_dot",
+        "speedup": 0.015443541406613776
+      },
+      {
+        "case": "tq1_0_dot",
+        "speedup": 0.0159611179228483
+      },
+      {
+        "case": "tq1_0_projection_prefill",
+        "speedup": 0.0161777390417397
+      },
+      {
+        "case": "tq1_0_projection_decode",
+        "speedup": 0.016779060561433322
+      },
+      {
+        "case": "tq1_0_dot_rows",
+        "speedup": 0.016824682089532465
+      },
+      {
+        "case": "iq1_m_projection_prefill",
+        "speedup": 0.016890149401757936
+      },
+      {
+        "case": "iq1_m_dot_rows",
+        "speedup": 0.01729238182374
+      },
+      {
+        "case": "iq1_m_projection_decode",
+        "speedup": 0.017366201373718623
+      },
+      {
+        "case": "ime_centered_decode",
+        "speedup": 0.018246809390418884
+      },
+      {
+        "case": "iq2_xs_dot",
+        "speedup": 0.019480262619785284
+      }
+    ],
+    "by_scope": {
+      "activation-quantization": {
+        "formal": 3,
+        "executed_and_correct": 3,
+        "matched_references": 3,
+        "faster_than_reference": 2,
+        "median_speedup": 1.0495923229226318
+      },
+      "causal-grouped-query-attention": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 0,
+        "faster_than_reference": 0,
+        "median_speedup": null
+      },
+      "elementwise-scale-bias": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.042807827194652835
+      },
+      "independent-dots-shared-activation": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 1,
+        "median_speedup": 0.08713055963805111
+      },
+      "layer_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.8759830379536058
+      },
+      "packed-ime-leaf": {
+        "formal": 4,
+        "executed_and_correct": 4,
+        "matched_references": 4,
+        "faster_than_reference": 0,
+        "median_speedup": 0.022150116765596993
+      },
+      "preallocated-gemm": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.324787279194544
+      },
+      "projection-includes-activation-quantization": {
+        "formal": 50,
+        "executed_and_correct": 50,
+        "matched_references": 50,
+        "faster_than_reference": 2,
+        "median_speedup": 0.08617808096484894
+      },
+      "rms_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.4901038086725553
+      },
+      "rope-neox-includes-coefficients": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.24323308213578654
+      },
+      "rope-precomputed-cos-sin": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.17799114741567204
+      },
+      "row-dequantization": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 1,
+        "median_speedup": 0.34591687674654625
+      },
+      "row-softmax": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.8693948080011686
+      },
+      "vec-dot-leaf": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 1,
+        "median_speedup": 0.08313531647070423
+      }
+    }
+  },
+  "k3-a100": {
+    "formal": 136,
+    "statuses": {
+      "ok": 136
+    },
+    "reference_matches": 135,
+    "reference_gaps": 1,
+    "faster_than_reference": 10,
+    "median_speedup": 0.1073923400661092,
+    "slowest": [
+      {
+        "case": "f16_projection_prefill",
+        "speedup": 0.008729621499477138
+      },
+      {
+        "case": "q3_k_dot",
+        "speedup": 0.017379585743004574
+      },
+      {
+        "case": "q3_k_projection_decode",
+        "speedup": 0.020014112883275953
+      },
+      {
+        "case": "q3_k_projection_prefill",
+        "speedup": 0.023593851051645034
+      },
+      {
+        "case": "tq1_0_dot",
+        "speedup": 0.024095387472932266
+      },
+      {
+        "case": "iq1_m_dot",
+        "speedup": 0.024378488733998276
+      },
+      {
+        "case": "q3_k_dot_rows",
+        "speedup": 0.024496957800100114
+      },
+      {
+        "case": "f16_projection_decode",
+        "speedup": 0.02618987447178079
+      },
+      {
+        "case": "iq4_xs_dot",
+        "speedup": 0.02987017361567112
+      },
+      {
+        "case": "iq1_m_dot_rows",
+        "speedup": 0.0306018871160871
+      }
+    ],
+    "by_scope": {
+      "activation-quantization": {
+        "formal": 3,
+        "executed_and_correct": 3,
+        "matched_references": 3,
+        "faster_than_reference": 2,
+        "median_speedup": 2.3346917158681793
+      },
+      "causal-grouped-query-attention": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 0,
+        "faster_than_reference": 0,
+        "median_speedup": null
+      },
+      "elementwise-scale-bias": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.1761227531471509
+      },
+      "independent-dots-shared-activation": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 1,
+        "median_speedup": 0.1053894879582909
+      },
+      "layer_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 2.1484206521854348
+      },
+      "packed-ime2-i8-block32": {
+        "formal": 2,
+        "executed_and_correct": 2,
+        "matched_references": 2,
+        "faster_than_reference": 0,
+        "median_speedup": 0.24134606488837607
+      },
+      "packed-ime2-u4-i8-affine-block32": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.21613351520550017
+      },
+      "preallocated-gemm": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.054850049495343646
+      },
+      "projection-includes-activation-quantization": {
+        "formal": 50,
+        "executed_and_correct": 50,
+        "matched_references": 50,
+        "faster_than_reference": 2,
+        "median_speedup": 0.10444736255963294
+      },
+      "rms_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.7242473792369613
+      },
+      "rope-neox-includes-coefficients": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 2.6350715490824412
+      },
+      "rope-precomputed-cos-sin": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.7456637465399372
+      },
+      "row-dequantization": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 0,
+        "median_speedup": 0.11064698525246591
+      },
+      "row-softmax": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.5622143696456623
+      },
+      "vec-dot-leaf": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 0,
+        "median_speedup": 0.08190965825865389
+      }
+    }
+  },
+  "sg2044": {
+    "formal": 133,
+    "statuses": {
+      "ok": 133
+    },
+    "reference_matches": 132,
+    "reference_gaps": 1,
+    "faster_than_reference": 11,
+    "median_speedup": 0.05796150980726559,
+    "slowest": [
+      {
+        "case": "tq1_0_dot",
+        "speedup": 0.0050362625907612295
+      },
+      {
+        "case": "tq1_0_projection_decode",
+        "speedup": 0.005055960393569712
+      },
+      {
+        "case": "tq1_0_dot_rows",
+        "speedup": 0.005127600122350135
+      },
+      {
+        "case": "tq1_0_projection_prefill",
+        "speedup": 0.005167242830396431
+      },
+      {
+        "case": "iq2_xxs_projection_prefill",
+        "speedup": 0.011162795040141674
+      },
+      {
+        "case": "iq2_xxs_dot",
+        "speedup": 0.011165961106932385
+      },
+      {
+        "case": "iq2_xxs_projection_decode",
+        "speedup": 0.011505988125852924
+      },
+      {
+        "case": "iq2_xxs_dot_rows",
+        "speedup": 0.01166685842948303
+      },
+      {
+        "case": "iq3_xxs_dot",
+        "speedup": 0.013036617928805243
+      },
+      {
+        "case": "iq3_xxs_projection_prefill",
+        "speedup": 0.013096105197795947
+      }
+    ],
+    "by_scope": {
+      "activation-quantization": {
+        "formal": 3,
+        "executed_and_correct": 3,
+        "matched_references": 3,
+        "faster_than_reference": 2,
+        "median_speedup": 1.0635261296663645
+      },
+      "causal-grouped-query-attention": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 0,
+        "faster_than_reference": 0,
+        "median_speedup": null
+      },
+      "elementwise-scale-bias": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.03382419841019471
+      },
+      "independent-dots-shared-activation": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 0,
+        "median_speedup": 0.039284886962892715
+      },
+      "layer_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 2.4002549914980036
+      },
+      "preallocated-gemm": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.1964023125405811
+      },
+      "projection-includes-activation-quantization": {
+        "formal": 50,
+        "executed_and_correct": 50,
+        "matched_references": 50,
+        "faster_than_reference": 0,
+        "median_speedup": 0.04310021247989633
+      },
+      "rms_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.7113586658080842
+      },
+      "rope-neox-includes-coefficients": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.1085026092350449
+      },
+      "rope-precomputed-cos-sin": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.10765386919572453
+      },
+      "row-dequantization": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 7,
+        "median_speedup": 0.256272753042507
+      },
+      "row-softmax": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.5194882228907064
+      },
+      "vec-dot-leaf": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 0,
+        "median_speedup": 0.035206310644906355
+      }
+    }
+  },
+  "x86-1t": {
+    "formal": 147,
+    "statuses": {
+      "ok": 147
+    },
+    "reference_matches": 140,
+    "reference_gaps": 7,
+    "faster_than_reference": 11,
+    "median_speedup": 0.03748548649839151,
+    "slowest": [
+      {
+        "case": "amx_q4_0_decode_tile",
+        "speedup": 5.5900386290144623e-05
+      },
+      {
+        "case": "iq2_xxs_projection_prefill",
+        "speedup": 0.0007255179607365992
+      },
+      {
+        "case": "amx_q4_0_prefill_strided",
+        "speedup": 0.0007767041256957413
+      },
+      {
+        "case": "iq3_s_projection_prefill",
+        "speedup": 0.0008089118977733681
+      },
+      {
+        "case": "q5_k_projection_prefill",
+        "speedup": 0.0008134152935300088
+      },
+      {
+        "case": "q3_k_projection_prefill",
+        "speedup": 0.0008717404610432213
+      },
+      {
+        "case": "iq2_s_projection_prefill",
+        "speedup": 0.0009045377224318995
+      },
+      {
+        "case": "iq1_m_projection_prefill",
+        "speedup": 0.0009293579759532113
+      },
+      {
+        "case": "iq3_xxs_projection_prefill",
+        "speedup": 0.0012445665810355967
+      },
+      {
+        "case": "iq2_xs_projection_prefill",
+        "speedup": 0.0013231493656770332
+      }
+    ],
+    "by_scope": {
+      "activation-quantization": {
+        "formal": 3,
+        "executed_and_correct": 3,
+        "matched_references": 3,
+        "faster_than_reference": 3,
+        "median_speedup": 1.2136240844832076
+      },
+      "causal-grouped-query-attention": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 0,
+        "faster_than_reference": 0,
+        "median_speedup": null
+      },
+      "elementwise-scale-bias": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.1404245581241249
+      },
+      "independent-dots-shared-activation": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 0,
+        "median_speedup": 0.01631120488426041
+      },
+      "layer_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 3.795578182919694
+      },
+      "native-amx-q4_0-tile/strided-output/prequantized/persistent-model-default": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.0007767041256957413
+      },
+      "native-amx-q4_k-tile/strided-output/prequantized/persistent-model-default": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.0132262968251161
+      },
+      "native-amx-q6_k-tile/strided-output/prequantized/persistent-model-default": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.009762550144032973
+      },
+      "native-vnni-q4_0-tile/prequantized/persistent-model-default": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 5.5900386290144623e-05
+      },
+      "native-vnni-q4_k-tile/prequantized/persistent-model-default": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.002568285200765899
+      },
+      "native-vnni-q6_k-tile/prequantized/persistent-model-default": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.0032513753582964697
+      },
+      "packed-ime-leaf": {
+        "formal": 4,
+        "executed_and_correct": 4,
+        "matched_references": 0,
+        "faster_than_reference": 0,
+        "median_speedup": null
+      },
+      "preallocated-gemm": {
+        "formal": 3,
+        "executed_and_correct": 3,
+        "matched_references": 3,
+        "faster_than_reference": 0,
+        "median_speedup": 0.03842871610846746
+      },
+      "projection-includes-activation-quantization": {
+        "formal": 50,
+        "executed_and_correct": 50,
+        "matched_references": 48,
+        "faster_than_reference": 0,
+        "median_speedup": 0.013734999304070464
+      },
+      "projection-preserves-f32-activation": {
+        "formal": 2,
+        "executed_and_correct": 2,
+        "matched_references": 2,
+        "faster_than_reference": 0,
+        "median_speedup": 0.027890802629917187
+      },
+      "rms_norm-affine": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 1.9237878177587673
+      },
+      "rope-neox-includes-coefficients": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.5963978686605891
+      },
+      "rope-precomputed-cos-sin": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 0,
+        "median_speedup": 0.8982209898617894
+      },
+      "row-dequantization": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 5,
+        "median_speedup": 0.19625449615617802
+      },
+      "row-softmax": {
+        "formal": 1,
+        "executed_and_correct": 1,
+        "matched_references": 1,
+        "faster_than_reference": 1,
+        "median_speedup": 5.10393135096505
+      },
+      "vec-dot-leaf": {
+        "formal": 24,
+        "executed_and_correct": 24,
+        "matched_references": 24,
+        "faster_than_reference": 0,
+        "median_speedup": 0.015955484840479178
+      }
+    }
+  }
+}

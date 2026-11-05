@@ -2,6 +2,8 @@
 
 [English](index.md) · [源码](https://github.com/Tianchen-ai/tilelang-weft-bench) · [编译器](https://github.com/Tianchen-ai/tilelang-weft)
 
+[算子结果](results.zh-CN.md) 展示原生倍率、JIT 指标、数值范围，以及性能差距对应的作者程序结构。
+
 本包为共用 Weft Bench 引擎选择原生 TileLang 作者程序，包含 150 个不同算子 ID、
 553 个平台用例。编译器发行包为 `tilelang`，测试命令为 `tilelang-weft-bench`。
 

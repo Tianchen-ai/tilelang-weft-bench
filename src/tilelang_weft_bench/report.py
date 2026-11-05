@@ -8,15 +8,16 @@ import statistics
 from collections import Counter
 from pathlib import Path
 
-from weft_bench.results import apply_baselines, contracts_match, read
 from weft_bench.output import OutputRun
+from weft_bench.results import apply_baselines, contracts_match, read
 
 from .catalogs import target_catalog, target_names
 
 FIELDS = (
     "target", "case", "shape", "scope", "status", "correctness", "native_us",
     "reference", "reference_us", "reference_speedup", "reference_match",
-    "triton_native_us", "triton_match", "cold_jit_ms", "first_cache_hit_ms", "disk_cache_restore_ms",
+    "triton_native_us", "triton_match", "cold_jit_ms", "compiler_api_ms", "first_call_outside_compiler_ms",
+    "cold_child_cpu_ms", "cache_hit_child_cpu_ms", "first_cache_hit_ms", "disk_cache_restore_ms",
     "python_hot_ms", "python_hot_samples", "python_hot_protocol", "disk_cache_hit", "same_compiled_kernel", "native_entry",
     "source", "symbol", "source_parameters", "backend_options", "binding_match", "used_extensions",
     "required_extensions", "selected_physical_engines", "target_arch", "target_vlen_bits",
@@ -143,6 +144,7 @@ def records(runs, references, triton, *, partial):
             else:
                 record["reference_match"] = "catalog_gap"
             matches = [item for item in old if item.implementation == "weft" and item.status == "ok"
+                       and item.details.get("producer") == "triton"
                        and item.median_ms is not None and contracts_match(row, item)]
             record["triton_match"] = "matched" if len(matches) == 1 else "unavailable" if not matches else "ambiguous"
             if len(matches) == 1:
@@ -176,6 +178,10 @@ def records(runs, references, triton, *, partial):
             engines, families, resources = physical_evidence(metadata)
             record.update(
                 cold_jit_ms=runtime.get("cold_compile_and_launch_ms", ""),
+                compiler_api_ms=runtime.get("compiler_api_ms", ""),
+                first_call_outside_compiler_ms=runtime.get("first_call_outside_compiler_ms", ""),
+                cold_child_cpu_ms=runtime.get("cold_child_cpu_ms", ""),
+                cache_hit_child_cpu_ms=runtime.get("cache_hit_child_cpu_ms", ""),
                 first_cache_hit_ms=runtime.get("first_cache_hit_launch_ms", ""),
                 disk_cache_restore_ms=jit.get("disk_cache", {}).get("cold_compile_and_launch_ms", ""),
                 python_hot_ms=jit.get("python_jit", {}).get("median_ms", ""),
@@ -280,7 +286,7 @@ def public_observations(runs, references, triton, destination):
             if path.is_file():
                 request = json.loads(path.read_text())
                 binding = {key: request[key] for key in (
-                    "source_module", "symbol", "constexprs", "backend_options",
+                    "producer", "source_module", "symbol", "constexprs", "backend_options",
                     "grid", "num_cpu_threads",
                 ) if key in request}
         return {
@@ -292,7 +298,18 @@ def public_observations(runs, references, triton, destination):
             "input_policy": details.get("input_policy"),
             "dtype": details.get("dtype"), "phase": details.get("phase"),
             "source_binding": binding,
+            "producer": details.get("producer"),
             "producer_version": runtime.get("tilelang", runtime.get("triton")),
+            "source_jit": {key: runtime[key] for key in (
+                "status", "correctness", "cold_compile_and_launch_ms", "compiler_api_ms",
+                "first_call_outside_compiler_ms", "cold_child_cpu_ms", "cache_hit_child_cpu_ms",
+                "first_cache_hit_launch_ms", "same_compiled_kernel", "samples_ms",
+                "python_measurement", "compilations",
+            ) if key in runtime},
+            "disk_cache": {key: jit.get("disk_cache", {})[key] for key in (
+                "status", "correctness", "cold_compile_and_launch_ms", "compiler_api_ms",
+                "cold_child_cpu_ms", "compilations",
+            ) if key in jit.get("disk_cache", {})},
             "execution": {
                 "cpus": execution.get("cpus", []), "threads": execution.get("threads"),
                 "isa": execution.get("isa", {}),
@@ -322,6 +339,7 @@ def public_observations(runs, references, triton, destination):
                     raise ValueError(f"public samples require one matched reference: {target}/{name}")
                 entry["reference"] = retained(matches[0])
             matched_triton = [item for item in comparison if item.implementation == "weft"
+                              and item.details.get("producer") == "triton"
                               and item.status == "ok" and item.median_ms is not None
                               and contracts_match(row, item)]
             if len(matched_triton) == 1:
@@ -345,16 +363,19 @@ def plot(rows, destination):
                         if row["target"] == target and row["reference_speedup"] != "")
         if values:
             axes[0].step(values, [(i + 1) / len(values) for i in range(len(values))],
-                         where="post", label=f"{target} (n={len(values)})")
+                         where="post", linewidth=1.7,
+                         label=f"{target}: {len(values)} pairs, median {statistics.median(values):.3g}x")
     axes[0].axvline(1, color="#778899", linewidth=1, linestyle="--")
-    axes[0].set(xscale="log", xlabel="Native reference / TileLang time", ylabel="Fraction of matched cases")
+    axes[0].set(xscale="log", xlabel="Native reference / TileLang time", ylabel="Fraction of matched cases",
+                title="Native performance distribution")
+    axes[0].grid(axis="x", alpha=0.18)
     axes[0].legend(fontsize=8)
     labels = target_names()
     done = [sum(row["target"] == target and row["status"] == "ok" for row in rows) for target in labels]
     total = [sum(row["target"] == target for row in rows) for target in labels]
     axes[1].bar(labels, total, color="#dde4eb", label="Formal suite")
     axes[1].bar(labels, done, color="#3a7ba8", label="Executed and correct")
-    axes[1].set(ylabel="Operator cases")
+    axes[1].set(ylabel="Operator cases", title="Source JIT and numerical checks")
     axes[1].legend(fontsize=8)
     axes[1].set_ylim(0, max(total) * 1.14)
     for index, (count, formal) in enumerate(zip(done, total)):

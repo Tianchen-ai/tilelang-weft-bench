@@ -1,0 +1,160 @@
+{
+  "schema": 1,
+  "campaign": "TileLang-Weft target-native source JIT; full operator suites",
+  "case_count": 553,
+  "distinct_case_ids": 150,
+  "matched_external_references": 543,
+  "reference_gaps": 10,
+  "matched_independent_triton_controls": 505,
+  "release_sources": {
+    "tilelang": {
+      "repository": "https://github.com/Tianchen-ai/tilelang-weft",
+      "release": "v0.1.15-weft.2",
+      "package": "0.1.15+weft.2",
+      "author_program_commit": "10b91b2fd04793fba9d338de519ecf7509fd762e"
+    },
+    "weft_core": {
+      "repository": "https://github.com/Tianchen-ai/triton-weft",
+      "commit": "1d19dd4b9a956614bb5a17e926b54b8d2e8869b3",
+      "package": "0.1.1"
+    },
+    "shared_bench": {
+      "repository": "https://github.com/Tianchen-ai/triton-weft-bench",
+      "runtime_commit": "93ee197",
+      "documentation_commit": "e93221d",
+      "package": "1.0.1"
+    },
+    "tilelang_bench": {
+      "repository": "https://github.com/Tianchen-ai/tilelang-weft-bench",
+      "release": "v0.1.0",
+      "package": "0.1.0"
+    }
+  },
+  "observed_tilelang_versions": {
+    "0.1.15+weft.2": 448,
+    "0.1.15+weft.1": 105
+  },
+  "source_equivalence": {
+    "scope": "Only source-location attributes normalized; original observation versions retained. This audit is not additional execution.",
+    "matched_programs": {
+      "sg2044": 133,
+      "k1": 137,
+      "k3-a100": 136,
+      "x86-1t": 147
+    }
+  },
+  "compiler_change_audit": {
+    "scope": "same retained Canonical program lowered by old and new x86 compiler; not an execution result",
+    "old_count": 147,
+    "new_count": 147,
+    "changed": [
+      "amx_q4_k_decode_tile",
+      "iq1_s_dequantize",
+      "iq1_s_dot",
+      "iq1_s_dot_rows"
+    ]
+  },
+  "measurement": {
+    "ratio": "matched reference native time / TileLang native time",
+    "native": "complete recorded workload; cold JIT and Python calls separate",
+    "cold": "compilation plus first full workload call; compiler API time is also recorded",
+    "cache": "fresh-process restoration and invocation; original cache events retained",
+    "numerical_checks": "exact serialized fields and integers; established floating tolerances; projection decode checks all columns, prefill checks64 outputs and all-output finiteness"
+  },
+  "selection": "Explicit final observation by case; no minimum-time selection. Isolated K3 Q2_K and I4 protocol observations replace the timings marked invalid for overlapping work.",
+  "reference_catalog": {
+    "ggml-cpu-rvv": {
+      "provider": "GGML",
+      "source": "https://github.com/ggml-org/llama.cpp",
+      "revision": "Retained source snapshot and compile database identify each fixed build; no unrecorded commit is inferred.",
+      "targets": [
+        "sg2044",
+        "k1",
+        "k3-a100"
+      ],
+      "workloads": "Quantized dot/rows, quantize/dequantize, projection, normalization, RoPE, softmax and dense computation",
+      "boundary": "Native leaf or full prepared graph, exactly as recorded by each case",
+      "build": "Clang 23, Release -O3, native ISA/VLEN, normal repack and available vendor features retained"
+    },
+    "ggml-cpu-x86": {
+      "provider": "GGML",
+      "source": "https://github.com/ggml-org/llama.cpp",
+      "revision": "620d222",
+      "targets": [
+        "x86-1t"
+      ],
+      "boundary": "Selected native function or complete model-default projection",
+      "build": "Clang 23, Release -O3, native x86 ISA; AMX-named buffer does not prove AMX instructions"
+    },
+    "ggml-ime1": {
+      "provider": "GGML SpacemiT IME1",
+      "targets": [
+        "k1"
+      ],
+      "entry": "spacemit_kernels::ime1::gemm_kernel_i8i4",
+      "boundary": "Packed M4/M1 row tile; persistent preparation outside both measurements",
+      "build": "Same recorded GGML source and normal IME1 build as the corresponding baseline"
+    },
+    "ggml-ime2": {
+      "provider": "SpacemiT IME2",
+      "targets": [
+        "k3-a100"
+      ],
+      "revision": "6df9f75",
+      "entry": "spacemit_kernels::ime2::gemm_kernel_i8i8",
+      "boundary": "Signed I8 packed M4/M1, N32, K512; Q6_K/Q8_0 storage contract",
+      "source_file": "ggml/src/ggml-spacemit/ime2_kernels.cpp",
+      "local_patches": [
+        "ggml-iq2-s-rvv1024.patch",
+        "ggml-iqxxs-rvv.patch"
+      ],
+      "build": "Clang 23 and compatible external assembler; A100 registration before affinity"
+    },
+    "ggml-ime2-i4-affine": {
+      "provider": "SpacemiT IME2",
+      "targets": [
+        "k3-a100"
+      ],
+      "revision": "6df9f75",
+      "entry": "spacemit_kernels::ime2::gemm_kernel_i8i4, block32 affine M4 integer branch",
+      "boundary": "Packed U4 weights and I8 activations, exact I32 products followed by F32 scale/update; two M4 calls cover an M8 window",
+      "source_file": "ggml/src/ggml-spacemit/ime2_kernels.cpp",
+      "build": "Same retained vendor reference library and external assembler as the IME2 I8 cases"
+    },
+    "openblas": {
+      "provider": "OpenBLAS",
+      "source": "https://github.com/OpenMathLib/OpenBLAS",
+      "version": "0.3.34",
+      "workloads": [
+        "gemm_f32"
+      ],
+      "entry": "cblas_sgemm",
+      "boundary": "LP64 SGEMM X[M,K] times W[N,K] transpose"
+    },
+    "onednn": {
+      "provider": "oneDNN",
+      "source": "https://github.com/uxlfoundation/oneDNN",
+      "version": "3.13.4",
+      "workloads": [
+        "gemm_f32",
+        "gemm_bf16_f32",
+        "gemm_s8_s32"
+      ],
+      "boundary": "Plain-stride matmul execute plus wait, internal packing included; strict F32"
+    },
+    "llama-normal": {
+      "provider": "Normal llama.cpp",
+      "source": "https://github.com/ggml-org/llama.cpp",
+      "boundary": "Prefill and decode separately; loading, compilation and startup excluded",
+      "build": "Retain normal repack, OpenMP and configured vendor backend; source and runtime policy per model",
+      "note": "K3 CPU/RVV and vendor IME2 are separate reference policies"
+    }
+  },
+  "files": {
+    "operators": "operators.csv",
+    "summary": "summary.json",
+    "original_samples": "observations.json",
+    "plot": "performance.svg",
+    "plot_png": "performance.png"
+  }
+}

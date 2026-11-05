@@ -29,6 +29,18 @@ tilelang-weft-bench op --suite full --target k3-a100 --config .local/bench.local
 输入准备，不改变样本计时窗口。生成的只读输入保存一次，由缓存验证和原生 worker
 复用。
 
+换到另一台机器时，先通过已登记的 provider 建立该机的匹配参考，再在开发中复用：
+
+```sh
+tilelang-weft-bench op q4_k_dot --impl ggml --target k1 --config .local/bench.local.json \
+  --output output/baselines/k1/q4_k_dot
+tilelang-weft-bench op q4_k_dot --target k1 --config .local/bench.local.json \
+  --baseline output/baselines/k1/q4_k_dot --output output/current/k1/q4_k_dot
+```
+
+[公开的样本文件](results.zh-CN.md) 保留本轮原始耗时与数值检查范围，移除机器私有路径。
+表中的倍率对应记录中的执行环境。
+
 使用现有比较命令复用成功记录：
 
 ```sh

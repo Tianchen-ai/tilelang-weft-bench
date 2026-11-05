@@ -35,6 +35,20 @@ process. This budget includes source JIT and input preparation; it does not
 change the timed sample window. Read-only generated inputs are captured once
 and reused by cache verification and the native worker.
 
+On another machine, first record that machine's matching reference with the
+registered provider, then reuse it for development:
+
+```sh
+tilelang-weft-bench op q4_k_dot --impl ggml --target k1 --config .local/bench.local.json \
+  --output output/baselines/k1/q4_k_dot
+tilelang-weft-bench op q4_k_dot --target k1 --config .local/bench.local.json \
+  --baseline output/baselines/k1/q4_k_dot --output output/current/k1/q4_k_dot
+```
+
+The [published sample export](results.md) retains this campaign's original
+timings and numerical-check scope, with private execution paths omitted. The
+table's ratios refer to the recorded execution environments.
+
 Reuse successful observations with the existing comparison command:
 
 ```sh
