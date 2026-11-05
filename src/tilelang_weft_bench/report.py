@@ -264,7 +264,7 @@ def save(rows, destination):
     return summary
 
 
-def public_observations(runs, references, destination):
+def public_observations(runs, references, triton, destination):
     """Publish original samples without machine-private paths or replay inputs."""
     observations = []
 
@@ -272,6 +272,17 @@ def public_observations(runs, references, destination):
         details = row.details
         execution = details.get("execution", {})
         environment = execution.get("env", {})
+        jit = details.get("jit", {})
+        runtime = jit.get("runtime", {})
+        binding = None
+        if jit.get("diagnostics"):
+            path = Path(jit["diagnostics"]) / "jit-request.json"
+            if path.is_file():
+                request = json.loads(path.read_text())
+                binding = {key: request[key] for key in (
+                    "source_module", "symbol", "constexprs", "backend_options",
+                    "grid", "num_cpu_threads",
+                ) if key in request}
         return {
             **{key: getattr(row, key) for key in (
                 "case", "implementation", "target", "shape", "scope", "status",
@@ -280,6 +291,8 @@ def public_observations(runs, references, destination):
             "measurement": details.get("measurement", {}),
             "input_policy": details.get("input_policy"),
             "dtype": details.get("dtype"), "phase": details.get("phase"),
+            "source_binding": binding,
+            "producer_version": runtime.get("tilelang", runtime.get("triton")),
             "execution": {
                 "cpus": execution.get("cpus", []), "threads": execution.get("threads"),
                 "isa": execution.get("isa", {}),
@@ -298,15 +311,21 @@ def public_observations(runs, references, destination):
     for target, path in runs.items():
         catalog = target_catalog(target)["cases"]
         baseline = read(references[target]) if target in references else []
+        comparison = read(triton[target]) if target in triton else []
         for name, row in observation_index(path).items():
             entry = {"tilelang": retained(row)}
             selected = catalog[name]
             if selected["reference"]:
                 matches = [item for item in baseline if item.implementation == selected["reference"]
-                           and item.status == "ok" and contracts_match(row, item)]
+                           and item.status == "ok" and item.median_ms is not None and contracts_match(row, item)]
                 if len(matches) != 1:
                     raise ValueError(f"public samples require one matched reference: {target}/{name}")
                 entry["reference"] = retained(matches[0])
+            matched_triton = [item for item in comparison if item.implementation == "weft"
+                              and item.status == "ok" and item.median_ms is not None
+                              and contracts_match(row, item)]
+            if len(matched_triton) == 1:
+                entry["triton"] = retained(matched_triton[0])
             observations.append(entry)
     (destination / "observations.json").write_text(json.dumps({
         "schema": 1,
@@ -356,10 +375,11 @@ def main():
     output = OutputRun(args.output)
     try:
         runs, references = mapping(args.run), mapping(args.reference)
-        rows = records(runs, references, mapping(args.triton), partial=args.partial)
+        triton = mapping(args.triton)
+        rows = records(runs, references, triton, partial=args.partial)
         summary = save(rows, output.stage)
         if not args.partial:
-            public_observations(runs, references, output.stage)
+            public_observations(runs, references, triton, output.stage)
         if args.plot:
             plot(rows, output.stage)
     except Exception as error:
