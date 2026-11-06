@@ -3002,35 +3002,37 @@
     }
   },
   "iq2_s_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.indexed_projection",
+    "symbol": "packed_words",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "IQ2_S",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "rows": 16,
+      "columns": 8
     },
     "grid": [
       1
     ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Codebook": "codebook"
+    },
+    "workspaces": [
+      "Panel",
+      "PackedActivation",
+      "Scales",
+      "BlockScale",
+      "Sums",
+      "ActivationScale",
+      "Transposed",
+      "Signs"
+    ]
   },
   "iq2_xs_projection_decode": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -3188,35 +3190,37 @@
     }
   },
   "iq3_s_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.indexed_projection",
+    "symbol": "packed_words",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "IQ3_S",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "rows": 16,
+      "columns": 8
     },
     "grid": [
       1
     ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Codebook": "codebook"
+    },
+    "workspaces": [
+      "Panel",
+      "PackedActivation",
+      "Scales",
+      "BlockScale",
+      "Sums",
+      "ActivationScale",
+      "Transposed",
+      "Signs"
+    ]
   },
   "iq3_xxs_projection_decode": {
     "source": "module:tilelang.weft.kernels.packed",
