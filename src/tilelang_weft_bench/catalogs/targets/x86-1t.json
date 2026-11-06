@@ -2684,17 +2684,15 @@
     }
   },
   "q4_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.indexed_projection",
+    "symbol": "packed_words",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q4_K",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "rows": 16,
+      "columns": 8
     },
     "grid": [
       1
@@ -2708,11 +2706,19 @@
       "Output": "Y",
       "Grid": "grid",
       "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Codebook": "codebook"
+    },
+    "workspaces": [
+      "Panel",
+      "PackedActivation",
+      "Scales",
+      "BlockScale",
+      "Sums",
+      "ActivationScale",
+      "Transposed",
+      "Minima",
+      "MinimumScale"
+    ]
   },
   "q5_k_projection_decode": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -2808,15 +2814,16 @@
     }
   },
   "q6_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
+    "source": "module:tilelang.weft.kernels.panel_projection",
     "symbol": "projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q6_K",
-      "rows": 4,
-      "activation": "Q8_K",
+      "rows": 16,
+      "columns": 16,
+      "engine": "auto",
       "extreme_policy": "first",
       "inverse_policy": "direct"
     },
@@ -2836,7 +2843,12 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
-    }
+    },
+    "workspaces": [
+      "Panel",
+      "PackedActivation",
+      "ActivationSums"
+    ]
   },
   "iq1_s_projection_decode": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -3031,7 +3043,9 @@
       "Sums",
       "ActivationScale",
       "Transposed",
-      "Signs"
+      "Signs",
+      "Minima",
+      "MinimumScale"
     ]
   },
   "iq2_xs_projection_decode": {
@@ -3219,7 +3233,9 @@
       "Sums",
       "ActivationScale",
       "Transposed",
-      "Signs"
+      "Signs",
+      "Minima",
+      "MinimumScale"
     ]
   },
   "iq3_xxs_projection_decode": {
@@ -3283,7 +3299,9 @@
       "BlockScale",
       "Sums",
       "ActivationScale",
-      "Transposed"
+      "Transposed",
+      "Minima",
+      "MinimumScale"
     ],
     "backend_options": {}
   },
@@ -3412,7 +3430,9 @@
       "BlockScale",
       "Sums",
       "ActivationScale",
-      "Transposed"
+      "Transposed",
+      "Minima",
+      "MinimumScale"
     ],
     "backend_options": {}
   },
