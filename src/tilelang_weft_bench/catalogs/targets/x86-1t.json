@@ -1864,7 +1864,8 @@
     "arguments": {
       "X": "X",
       "Output": "Y"
-    }
+    },
+    "workspaces": []
   },
   "gemm_f32": {
     "source": "module:tilelang.weft.kernels.panel_dense",
@@ -1951,10 +1952,13 @@
     "constexprs": {
       "M": 128,
       "N": 4096,
-      "cpu_num_threads": 1
+      "block": 128,
+      "cpu_num_threads": 1,
+      "rows_per_program": 128,
+      "reduction_width": 128
     },
     "grid": [
-      128
+      1
     ],
     "num_cpu_threads": 1,
     "backend_options": {},
@@ -1968,7 +1972,8 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
-    }
+    },
+    "workspaces": []
   },
   "layer_norm": {
     "source": "module:tilelang.weft.kernels.normalization",
@@ -1976,10 +1981,13 @@
     "constexprs": {
       "M": 128,
       "N": 4096,
-      "cpu_num_threads": 1
+      "cpu_num_threads": 1,
+      "block": 128,
+      "rows_per_program": 128,
+      "reduction_width": 128
     },
     "grid": [
-      128
+      1
     ],
     "num_cpu_threads": 1,
     "backend_options": {},
@@ -1993,7 +2001,8 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
-    }
+    },
+    "workspaces": []
   },
   "rope_split": {
     "source": "module:tilelang.weft.kernels.attention",
@@ -2020,10 +2029,11 @@
     "constexprs": {
       "M": 4096,
       "N": 128,
-      "cpu_num_threads": 1
+      "cpu_num_threads": 1,
+      "rows_per_program": 4096
     },
     "grid": [
-      4096
+      1
     ],
     "num_cpu_threads": 1,
     "backend_options": {},
@@ -2037,7 +2047,8 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
-    }
+    },
+    "workspaces": []
   },
   "ime_centered": {
     "source": "module:tilelang.weft.kernels.matrix",
@@ -2160,17 +2171,15 @@
     }
   },
   "q1_0_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
+    "source": "module:tilelang.weft.kernels.subblock_partials",
     "symbol": "projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q1_0",
-      "rows": 4,
-      "activation": "Q8_0",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "columns": 1,
+      "records": 1
     },
     "grid": [
       1
@@ -2182,13 +2191,11 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
       "Scale": "scale",
-      "HalfBits": "f16_bits",
       "Powers": "powers"
-    }
+    },
+    "workspaces": []
   },
   "q1_0_projection_prefill": {
     "source": "module:tilelang.weft.kernels.subblock_projection",
@@ -2721,17 +2728,14 @@
     ]
   },
   "q5_k_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.short_projection",
+    "symbol": "affine_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q5_K",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "columns": 8
     },
     "grid": [
       1
@@ -2743,26 +2747,23 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Codebook": "codebook"
+    },
+    "workspaces": [],
+    "persistent_inputs": [
+      "Weights"
+    ]
   },
   "q5_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.indexed_projection",
+    "symbol": "packed_words",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q5_K",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "rows": 16,
+      "columns": 8
     },
     "grid": [
       1
@@ -2776,11 +2777,19 @@
       "Output": "Y",
       "Grid": "grid",
       "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Codebook": "codebook"
+    },
+    "workspaces": [
+      "Panel",
+      "PackedActivation",
+      "Scales",
+      "BlockScale",
+      "Sums",
+      "ActivationScale",
+      "Transposed",
+      "Minima",
+      "MinimumScale"
+    ]
   },
   "q6_k_projection_decode": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -2917,17 +2926,15 @@
     ]
   },
   "iq1_m_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "indexed_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "IQ1_M",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "columns": 1,
+      "windows": 4
     },
     "grid": [
       1
@@ -2940,12 +2947,9 @@
       "Quantized": "Xq",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "HalfBits": "f16_bits"
+    },
+    "workspaces": []
   },
   "iq1_m_projection_prefill": {
     "source": "module:tilelang.weft.kernels.indexed_projection",
@@ -3049,17 +3053,15 @@
     ]
   },
   "iq2_xs_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "indexed_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "IQ2_XS",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "columns": 1,
+      "windows": 4
     },
     "grid": [
       1
@@ -3072,12 +3074,9 @@
       "Quantized": "Xq",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "HalfBits": "f16_bits"
+    },
+    "workspaces": []
   },
   "iq2_xs_projection_prefill": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -3111,17 +3110,15 @@
     }
   },
   "iq2_xxs_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "indexed_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "IQ2_XXS",
-      "rows": 4,
-      "activation": "Q8_K",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "columns": 1,
+      "windows": 4
     },
     "grid": [
       1
@@ -3134,12 +3131,9 @@
       "Quantized": "Xq",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "HalfBits": "f16_bits"
+    },
+    "workspaces": []
   },
   "iq2_xxs_projection_prefill": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -3623,17 +3617,14 @@
     "backend_options": {}
   },
   "nvfp4_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
+    "source": "module:tilelang.weft.kernels.subblock_projection",
     "symbol": "projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "NVFP4",
-      "rows": 4,
-      "activation": "Q8_0",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "columns": 16
     },
     "grid": [
       1
@@ -3645,13 +3636,10 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Scale": "scale"
+    },
+    "workspaces": []
   },
   "nvfp4_projection_prefill": {
     "source": "module:tilelang.weft.kernels.subblock_projection",

@@ -145,6 +145,8 @@ def checked_pair(source, pair):
             raise ValueError(f"native pair was not measured in alternating order: {label}")
     source_artifact = Path(source.details["artifacts"]["weft"])
     paired_artifact = Path(candidate.details["artifacts"]["weft"])
+    if source.details.get("entry") != candidate.details.get("entry") or source.details.get("launch", {}) != candidate.details.get("launch", {}):
+        raise ValueError(f"native pair changes the checked source launch: {label}")
     for filename in ("kernel.weftir", "kernel.llir" if (source_artifact / "kernel.llir").is_file() else "kernel.c"):
         if (source_artifact / filename).read_bytes() != (paired_artifact / filename).read_bytes():
             raise ValueError(f"native pair is not the source-JIT artifact: {label}: {filename}")
