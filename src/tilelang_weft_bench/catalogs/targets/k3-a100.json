@@ -129,13 +129,20 @@
       "M": 1,
       "K": 4096,
       "format": "Q8_K",
-      "extreme_policy": "extrema"
+      "extreme_policy": "extrema",
+      "chunk": 64
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "unroll": 1,
+      "lmul_eighths": 16,
+      "pipeline_depth": 1,
+      "pointwise_issue_copies": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "X": "X",
       "Output": "Y"
@@ -841,30 +848,26 @@
     }
   },
   "q3_k_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "scaled_lanes",
     "constexprs": {
       "M": 1,
       "K": 4096,
       "format": "Q3_K",
-      "activation": "Q8_K",
-      "rows": 1
+      "lanes": 32
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "pipeline_depth": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q3_k_dot_rows": {
@@ -1008,20 +1011,24 @@
     }
   },
   "q4_k_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "affine_groups",
     "constexprs": {
       "M": 1,
       "K": 4096,
-      "format": "Q4_K",
-      "activation": "Q8_K",
-      "rows": 1
+      "format": "Q4_K"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "unroll": 2,
+      "lmul_eighths": 8,
+      "pipeline_depth": 1,
+      "pointwise_issue_copies": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1227,20 +1234,25 @@
     }
   },
   "q6_k_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "q6_planes",
     "constexprs": {
       "M": 1,
       "K": 4096,
-      "format": "Q6_K",
-      "activation": "Q8_K",
-      "rows": 1
+      "rows": 1,
+      "lanes": 64,
+      "planes": 2
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 16,
+      "unroll": 16,
+      "pipeline_depth": 2,
+      "pointwise_issue_copies": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1338,29 +1350,26 @@
     }
   },
   "tq1_0_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.subblock_partials",
+    "symbol": "ternary_planes",
     "constexprs": {
       "M": 1,
-      "K": 4096,
-      "format": "TQ1_0",
-      "activation": "Q8_K",
-      "rows": 1
+      "K": 4096
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 4,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
       "Powers": "powers"
     }
   },
