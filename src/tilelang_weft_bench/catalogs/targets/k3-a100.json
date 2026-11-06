@@ -3569,13 +3569,19 @@
       "M": 128,
       "N": 4096,
       "cpu_num_threads": 1,
-      "block": 32
+      "rows_per_program": 128,
+      "reduction_width": 4096,
+      "block": 128
     },
     "grid": [
-      128
+      1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "unroll": 2,
+      "pipeline_depth": 2
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -3595,13 +3601,19 @@
       "M": 128,
       "N": 4096,
       "cpu_num_threads": 1,
-      "block": 32
+      "rows_per_program": 128,
+      "reduction_width": 4096,
+      "block": 128
     },
     "grid": [
-      128
+      1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "unroll": 1,
+      "pipeline_depth": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",

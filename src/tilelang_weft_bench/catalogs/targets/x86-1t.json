@@ -3695,13 +3695,13 @@
   },
   "amx_q4_0_decode_tile": {
     "source": "module:tilelang.weft.kernels.matrix",
-    "symbol": "packed_x86",
+    "symbol": "q4_0_decode",
     "constexprs": {
       "M": 1,
       "N": 64,
       "K": 4096,
-      "format": "Q4_0",
-      "decode": true
+      "columns": 64,
+      "reuse_sums": true
     },
     "grid": [
       1
@@ -3714,7 +3714,10 @@
     ],
     "persistent_providers": {
       "W": "ggml-amx-q4_0"
-    }
+    },
+    "workspaces": [
+      "Sums"
+    ]
   },
   "amx_q4_k_decode_tile": {
     "source": "module:tilelang.weft.kernels.matrix",
@@ -3747,7 +3750,9 @@
       "N": 512,
       "K": 14336,
       "format": "Q6_K",
-      "decode": true
+      "decode": true,
+      "columns": 64,
+      "groups_per_step": 2
     },
     "grid": [
       1
@@ -3760,7 +3765,8 @@
     ],
     "persistent_providers": {
       "W": "ggml-amx-q6_k"
-    }
+    },
+    "workspaces": []
   },
   "amx_q4_k_prefill_strided": {
     "source": "module:tilelang.weft.kernels.matrix",
@@ -3771,20 +3777,25 @@
       "K": 4096,
       "LDC": 4096,
       "format": "Q4_K",
-      "decode": false
+      "decode": false,
+      "rows": 16,
+      "columns": 32
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {},
     "persistent_inputs": [
       "W"
     ],
     "persistent_providers": {
       "W": "ggml-amx-q4_k"
-    }
+    },
+    "workspaces": []
   },
   "amx_q6_k_prefill_strided": {
     "source": "module:tilelang.weft.kernels.matrix",
