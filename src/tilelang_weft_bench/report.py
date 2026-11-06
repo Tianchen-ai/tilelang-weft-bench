@@ -6,6 +6,7 @@ import json
 import math
 import statistics
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 from weft_bench.output import OutputRun
@@ -15,8 +16,10 @@ from .catalogs import target_catalog, target_names
 
 FIELDS = (
     "target", "case", "shape", "scope", "status", "correctness", "native_us",
-    "reference", "reference_us", "reference_speedup", "reference_match",
-    "triton_native_us", "triton_match", "cold_jit_ms", "compiler_api_ms", "first_call_outside_compiler_ms",
+    "reference", "reference_us", "reference_candidate_us", "reference_speedup", "reference_match",
+    "triton_native_us", "triton_match", "source_jit_native_us", "triton_historical_us",
+    "tilelang_over_triton", "triton_gap_percent", "parity_status",
+    "cold_jit_ms", "compiler_api_ms", "first_call_outside_compiler_ms",
     "cold_child_cpu_ms", "cache_hit_child_cpu_ms", "first_cache_hit_ms", "disk_cache_restore_ms",
     "python_hot_ms", "python_hot_samples", "python_hot_protocol", "disk_cache_hit", "same_compiled_kernel", "native_entry",
     "source", "symbol", "source_parameters", "backend_options", "binding_match", "used_extensions",
@@ -102,13 +105,60 @@ def require_jit_evidence(row, runtime, restored):
             raise ValueError(f"missing {metric}: {label}")
 
 
-def records(runs, references, triton, *, partial):
+def native_pairs(path):
+    selected = {}
+    for row in read(path):
+        if row.implementation not in ("tilelang_native", "triton_control"):
+            raise ValueError("native pairs require tilelang_native and triton_control observations")
+        pair = selected.setdefault(row.case, {})
+        if row.implementation in pair:
+            raise ValueError(f"duplicate native pair observation: {row.target}/{row.case}")
+        pair[row.implementation] = row
+    return selected
+
+
+def checked_pair(source, pair):
+    label = f"{source.target}/{source.case}"
+    if set(pair) != {"tilelang_native", "triton_control"}:
+        raise ValueError(f"incomplete native pair: {label}")
+    candidate, control = pair["tilelang_native"], pair["triton_control"]
+    if not contracts_match(candidate, control):
+        raise ValueError(f"native pair has different measurement contracts: {label}")
+    # The source run proves JIT and numerical behavior; only the alternating
+    # pair supplies comparison timings. Match the source workload with that
+    # one intentional order change, retaining every other measurement field.
+    source_measurement = dict(source.details.get("measurement", {}))
+    if source_measurement.get("sample_order", "serial") not in ("serial", "alternating"):
+        raise ValueError(f"unknown source measurement order: {label}")
+    source_measurement["sample_order"] = "alternating"
+    paired_source = replace(source, details={**source.details, "measurement": source_measurement})
+    for row, producer in ((candidate, "tilelang"), (control, "triton")):
+        if row.status != "ok" or not contracts_match(paired_source, row):
+            raise ValueError(f"native pair does not match the checked source workload: {label}")
+        if not any(marker in row.correctness for marker in ("within-tolerance", "bit-exact", "sampled-64-exact")):
+            raise ValueError(f"native pair lacks a numerical check: {label}")
+        if row.details.get("producer") != producer:
+            raise ValueError(f"native pair has an incorrect compiler producer: {label}")
+        if not row.samples_ms or row.median_ms is None or not math.isfinite(row.median_ms) or row.median_ms <= 0:
+            raise ValueError(f"native pair has no finite latency samples: {label}")
+        if row.details.get("measurement", {}).get("sample_order") != "alternating":
+            raise ValueError(f"native pair was not measured in alternating order: {label}")
+    source_artifact = Path(source.details["artifacts"]["weft"])
+    paired_artifact = Path(candidate.details["artifacts"]["weft"])
+    for filename in ("kernel.weftir", "kernel.llir" if (source_artifact / "kernel.llir").is_file() else "kernel.c"):
+        if (source_artifact / filename).read_bytes() != (paired_artifact / filename).read_bytes():
+            raise ValueError(f"native pair is not the source-JIT artifact: {label}: {filename}")
+    return candidate, control
+
+
+def records(runs, references, triton, *, partial, paired=None):
     output = []
     for target in target_names():
         catalog = target_catalog(target)
         current = observation_index(runs[target]) if target in runs else {}
         baseline = read(references[target]) if target in references else []
         old = read(triton[target]) if target in triton else []
+        pairs = native_pairs(paired[target]) if paired and target in paired else {}
         unknown = set(current) - set(catalog["cases"])
         if unknown:
             raise ValueError(f"observations outside {target}'s formal suite: {sorted(unknown)}")
@@ -130,7 +180,9 @@ def records(runs, references, triton, *, partial):
             if row.shape != selected["shape"]:
                 raise ValueError(f"nonformal shape: {target}/{name}: {row.shape}")
             record.update(status=row.status, correctness=row.correctness, scope=row.scope,
-                          native_us=row.median_ms * 1000 if row.median_ms is not None else "")
+                          native_us=row.median_ms * 1000 if row.median_ms is not None else "",
+                          source_jit_native_us=row.median_ms * 1000 if row.median_ms is not None else "",
+                          parity_status="not_measured")
             if row.status != "ok" and not partial:
                 raise ValueError(f"unresolved execution: {target}/{name}: {row.status}")
             if selected["reference"]:
@@ -138,21 +190,34 @@ def records(runs, references, triton, *, partial):
                 record["reference_match"] = "matched" if row.speedup is not None else "unmatched"
                 if row.speedup is not None:
                     record.update(reference_us=row.details["baseline_median_ms"] * 1000,
+                                  reference_candidate_us=row.median_ms * 1000,
                                   reference_speedup=row.speedup)
                 elif not partial:
                     raise ValueError(f"unmatched required reference: {target}/{name}: {row.details.get('comparison_note')}")
             else:
                 record["reference_match"] = "catalog_gap"
-            matches = [item for item in old if item.implementation == "weft" and item.status == "ok"
+            matches = [item for item in old if item.implementation in ("weft", "triton_control", "triton_source")
+                       and item.status == "ok"
                        and item.details.get("producer") == "triton"
                        and item.median_ms is not None and contracts_match(row, item)]
-            record["triton_match"] = "matched" if len(matches) == 1 else "unavailable" if not matches else "ambiguous"
+            record["triton_match"] = "historical_only" if len(matches) == 1 else "unavailable" if not matches else "ambiguous"
             if len(matches) == 1:
-                record["triton_native_us"] = matches[0].median_ms * 1000
+                record["triton_historical_us"] = matches[0].median_ms * 1000
+            if name in pairs and row.status == "ok":
+                paired_candidate, control = checked_pair(row, pairs[name])
+                ratio = paired_candidate.median_ms / control.median_ms
+                record.update(native_us=paired_candidate.median_ms * 1000,
+                              triton_native_us=control.median_ms * 1000,
+                              triton_match="paired", tilelang_over_triton=ratio,
+                              triton_gap_percent=(ratio - 1) * 100,
+                              parity_status="passed" if ratio <= 1.03 else "over_3_percent")
+            if not partial and record["parity_status"] != "passed":
+                raise ValueError(f"unresolved Triton performance inheritance: {target}/{name}: {record['parity_status']}")
             jit = row.details.get("jit", {})
             runtime = jit.get("runtime", {})
             cache = jit.get("disk_cache", {}).get("compilations", [])
-            measure = row.details.get("measurement", {})
+            timed_row = pairs[name]["tilelang_native"] if record["triton_match"] == "paired" else row
+            measure = timed_row.details.get("measurement", {})
             metadata = artifact_metadata(row) if row.status == "ok" else {}
             if row.status == "ok":
                 request = source_request(row)
@@ -198,7 +263,7 @@ def records(runs, references, triton, *, partial):
                 warmup=measure.get("warmup", ""), warmup_ms=measure.get("warmup_ms", 0.0),
                 batch_ms=measure.get("batch_ms", ""), data_cache=measure.get("cache", ""),
                 sample_order=measure.get("sample_order", "serial"), native_protocol=measure.get("protocol", ""),
-                sample_count=len(row.samples_ms),
+                sample_count=len(timed_row.samples_ms),
                 numerical_check_scope=row.correctness,
                 selected_physical_engines=json.dumps(engines),
                 instruction_families=json.dumps(families),
@@ -234,12 +299,16 @@ def save(rows, destination):
             "reference_matches": len(ratios), "reference_gaps": sum(row["reference_match"] == "catalog_gap" for row in group),
             "faster_than_reference": sum(value > 1 for value in ratios),
             "median_speedup": statistics.median(ratios) if ratios else None,
+            "triton_paired": sum(row["triton_match"] == "paired" for row in group),
+            "triton_within_3_percent": sum(row["parity_status"] == "passed" for row in group),
+            "parity_statuses": dict(Counter(row["parity_status"] for row in group)),
             "slowest": sorted(({"case": row["case"], "speedup": row["reference_speedup"]} for row in group
                                if row["reference_speedup"] != ""), key=lambda item: item["speedup"])[:10],
             "by_scope": scopes,
         }
     (destination / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
-    complete = all(row["status"] == "ok" and row["reference_match"] in ("matched", "catalog_gap") for row in rows)
+    complete = all(row["status"] == "ok" and row["parity_status"] == "passed"
+                   and row["reference_match"] in ("matched", "catalog_gap") for row in rows)
     lines = ["# TileLang–Weft operator comparison / 算子对比", "",
              "Status / 状态: " + ("complete / 完成" if complete else "in progress / 进行中"), "",
              ("Speedup is matched native reference time divided by TileLang native time. "
@@ -251,6 +320,14 @@ def save(rows, destination):
         lines.append(f"| {target} | {item['statuses'].get('ok', 0)}/{item['formal']} | "
                      f"{item['reference_matches']} | {item['faster_than_reference']} | {median} |")
     lines += ["", "[Full operator CSV / 完整算子表](operators.csv)", "",
+              "| Target / 平台 | Alternating Triton pairs / 交替配对 | Within 3% / 达标 |",
+              "|---|---:|---:|"]
+    for target, item in summary.items():
+        lines.append(f"| {target} | {item['triton_paired']}/{item['formal']} | "
+                     f"{item['triton_within_3_percent']}/{item['formal']} |")
+    lines += ["",
+              ("TileLang / Triton latency must be at most 1.03 for each case. "
+               "每项 TileLang / Triton 耗时比须不超过 1.03。"), "",
               ("Native computation, cold JIT, cache restoration and Python hot calls have separate columns. "
                "原生计算、冷 JIT、缓存恢复和 Python 热调用分别记录。"), "",
               ("The CSV retains numerical-check scope, source parameters, hardware decisions and reference gaps. "
@@ -270,7 +347,7 @@ def save(rows, destination):
     return summary
 
 
-def public_observations(runs, references, triton, destination):
+def public_observations(runs, references, triton, destination, paired):
     """Publish original samples without machine-private paths or replay inputs."""
     observations = []
 
@@ -329,6 +406,7 @@ def public_observations(runs, references, triton, destination):
         catalog = target_catalog(target)["cases"]
         baseline = read(references[target]) if target in references else []
         comparison = read(triton[target]) if target in triton else []
+        pairs = native_pairs(paired[target]) if target in paired else {}
         for name, row in observation_index(path).items():
             entry = {"tilelang": retained(row)}
             selected = catalog[name]
@@ -343,7 +421,10 @@ def public_observations(runs, references, triton, destination):
                               and item.status == "ok" and item.median_ms is not None
                               and contracts_match(row, item)]
             if len(matched_triton) == 1:
-                entry["triton"] = retained(matched_triton[0])
+                entry["triton_historical"] = retained(matched_triton[0])
+            if name in pairs:
+                candidate, control = checked_pair(row, pairs[name])
+                entry["native_pair"] = {"tilelang": retained(candidate), "triton": retained(control)}
             observations.append(entry)
     (destination / "observations.json").write_text(json.dumps({
         "schema": 1,
@@ -384,10 +465,33 @@ def plot(rows, destination):
         figure.savefig(destination / ("performance." + suffix), dpi=160)
     plt.close(figure)
 
+    figure, axes = plt.subplots(1, 2, figsize=(12, 4.3), constrained_layout=True)
+    for target in labels:
+        values = sorted(row["tilelang_over_triton"] for row in rows
+                        if row["target"] == target and row["tilelang_over_triton"] != "")
+        if values:
+            axes[0].step(values, [(i + 1) / len(values) for i in range(len(values))],
+                         where="post", linewidth=1.7, label=f"{target}: {len(values)} pairs")
+    axes[0].axvline(1.03, color="#aa5b39", linewidth=1, linestyle="--", label="3% limit")
+    axes[0].set(xscale="log", xlabel="TileLang native time / Triton native time",
+                ylabel="Fraction of paired cases", title="Shared compiler performance inheritance")
+    axes[0].grid(axis="x", alpha=0.18)
+    axes[0].legend(fontsize=8)
+    passed = [sum(row["target"] == target and row["parity_status"] == "passed" for row in rows) for target in labels]
+    axes[1].bar(labels, total, color="#dde4eb", label="Formal suite")
+    axes[1].bar(labels, passed, color="#397b64", label="Numerically correct and within 3%")
+    axes[1].set(ylabel="Operator cases", title="Per-case Triton parity", ylim=(0, max(total) * 1.14))
+    axes[1].legend(fontsize=8)
+    for index, (count, formal) in enumerate(zip(passed, total)):
+        axes[1].text(index, formal + 2, f"{count}/{formal}", ha="center", fontsize=9)
+    for suffix in ("svg", "png"):
+        figure.savefig(destination / ("parity." + suffix), dpi=160)
+    plt.close(figure)
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("run", "reference", "triton"):
+    for name in ("run", "reference", "triton", "paired"):
         parser.add_argument("--" + name, action="append", default=[], metavar="TARGET=RUN")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--partial", action="store_true", help="retain missing/failed rows as explicit incomplete states")
@@ -397,10 +501,11 @@ def main():
     try:
         runs, references = mapping(args.run), mapping(args.reference)
         triton = mapping(args.triton)
-        rows = records(runs, references, triton, partial=args.partial)
+        paired = mapping(args.paired)
+        rows = records(runs, references, triton, partial=args.partial, paired=paired)
         summary = save(rows, output.stage)
         if not args.partial:
-            public_observations(runs, references, triton, output.stage)
+            public_observations(runs, references, triton, output.stage, paired)
         if args.plot:
             plot(rows, output.stage)
     except Exception as error:
