@@ -3026,7 +3026,9 @@
       "Sums",
       "ActivationScale",
       "Transposed",
-      "Signs"
+      "Signs",
+      "Minima",
+      "MinimumScale"
     ],
     "backend_options": {},
     "num_cpu_threads": 1
@@ -3274,7 +3276,9 @@
       "BlockScale",
       "Sums",
       "ActivationScale",
-      "Transposed"
+      "Transposed",
+      "Minima",
+      "MinimumScale"
     ],
     "backend_options": {},
     "num_cpu_threads": 1
@@ -3399,7 +3403,9 @@
       "BlockScale",
       "Sums",
       "ActivationScale",
-      "Transposed"
+      "Transposed",
+      "Minima",
+      "MinimumScale"
     ],
     "backend_options": {},
     "num_cpu_threads": 1
