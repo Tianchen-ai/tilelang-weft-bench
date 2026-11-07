@@ -3733,7 +3733,7 @@
       "K": 4096,
       "generation": 2,
       "affine": true,
-      "tile_rows": 4,
+      "tile_rows": 8,
       "columns": 32,
       "engine": "matrix"
     },
@@ -3742,7 +3742,9 @@
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "matrix_extension": "spacemit-ime2"
+      "matrix_extension": "spacemit-ime2",
+      "unroll": 2,
+      "private_stack_bytes": 262144
     },
     "arguments": {}
   },
