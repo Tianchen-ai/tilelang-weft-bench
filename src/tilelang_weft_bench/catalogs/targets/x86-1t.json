@@ -2983,7 +2983,7 @@
       "N": 4096,
       "K": 4096,
       "format": "IQ2_S",
-      "columns": 1,
+      "columns": 2,
       "windows": 4
     },
     "grid": [
