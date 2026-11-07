@@ -64,7 +64,9 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -3793,7 +3795,7 @@
       "format": "Q6_K",
       "decode": true,
       "columns": 64,
-      "groups_per_step": 2
+      "groups_per_step": 4
     },
     "grid": [
       1
