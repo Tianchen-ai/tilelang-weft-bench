@@ -31,34 +31,32 @@
     }
   },
   "q4_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.panel_projection",
+    "symbol": "staged_affine",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q4_K",
-      "rows": 1,
-      "activation": "Q8_K",
-      "extreme_policy": "extrema",
-      "inverse_policy": "reciprocal"
+      "staged_columns": 64,
+      "block_k": 256,
+      "batch_rows": 16,
+      "columns": 16
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "unroll": 2,
+      "pipeline_depth": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "gemm_f32": {
@@ -197,11 +195,12 @@
   },
   "iq1_s_dot": {
     "source": "module:tilelang.weft.kernels.indexed_lanes",
-    "symbol": "iq1_planes",
+    "symbol": "vec_dot",
     "constexprs": {
       "M": 1,
       "K": 4096,
-      "groups_per_step": 1
+      "format": "IQ1_S",
+      "groups_per_step": 8
     },
     "grid": [
       1
@@ -3259,34 +3258,35 @@
     }
   },
   "q5_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.panel_projection",
+    "symbol": "staged_affine",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q5_K",
-      "rows": 1,
-      "activation": "Q8_K",
-      "extreme_policy": "extrema",
-      "inverse_policy": "reciprocal"
+      "staged_columns": 32,
+      "block_k": 4096,
+      "batch_rows": 16,
+      "columns": 4,
+      "rows": 2,
+      "partials": 1
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q6_k_projection_decode": {
