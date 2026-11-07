@@ -1,14 +1,12 @@
 {
   "q4_k_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "scale_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q4_K",
-      "rows": 1,
-      "activation": "Q8_K",
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal"
     },
@@ -16,18 +14,17 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 8,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q4_k_projection_prefill": {
@@ -778,10 +775,10 @@
       "M": 4096,
       "K": 4096,
       "format": "Q1_0",
-      "rows_per_program": 1
+      "rows_per_program": 4096
     },
     "grid": [
-      4096
+      1
     ],
     "num_cpu_threads": 1,
     "backend_options": {
@@ -3256,15 +3253,13 @@
     }
   },
   "q5_k_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "scale_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q5_K",
-      "rows": 1,
-      "activation": "Q8_K",
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal"
     },
@@ -3272,18 +3267,17 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 8,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q5_k_projection_prefill": {
