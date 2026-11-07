@@ -2522,9 +2522,7 @@
       "Weights"
     ],
     "workspaces": [
-      "Sums",
-      "Codebook",
-      "Scale"
+      "Sums"
     ],
     "num_cpu_threads": 1,
     "backend_options": {}
