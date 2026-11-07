@@ -2235,7 +2235,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2264,7 +2266,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2293,7 +2297,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2322,7 +2328,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2351,7 +2359,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2380,7 +2390,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2409,7 +2421,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2438,7 +2452,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2467,7 +2483,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2496,7 +2514,9 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "persistent_inputs": [
       "Weights"
@@ -2528,7 +2548,8 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Codebook": "codebook"
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "source": "module:tilelang.weft.kernels.short_projection",
     "workspaces": [],
@@ -2718,7 +2739,8 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Codebook": "codebook"
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "workspaces": [],
     "persistent_inputs": [
@@ -3338,7 +3360,8 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Codebook": "codebook"
+      "Codebook": "codebook",
+      "Scale": "scale"
     },
     "source": "module:tilelang.weft.kernels.short_projection",
     "workspaces": [],
