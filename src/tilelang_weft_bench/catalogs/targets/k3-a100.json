@@ -470,30 +470,28 @@
     }
   },
   "iq3_xxs_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.indexed_lanes",
+    "symbol": "xxs_subgroups",
     "constexprs": {
       "M": 1,
-      "K": 4096,
-      "format": "IQ3_XXS",
-      "activation": "Q8_K",
-      "rows": 1
+      "K": 4096
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Signs": "signs"
     }
   },
   "iq3_xxs_dot_rows": {
