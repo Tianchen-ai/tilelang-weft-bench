@@ -578,30 +578,28 @@
     }
   },
   "iq4_xs_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.indexed_lanes",
+    "symbol": "scaled_entries",
     "constexprs": {
       "M": 1,
       "K": 4096,
-      "format": "IQ4_XS",
-      "activation": "Q8_K",
-      "rows": 1
+      "format": "IQ4_XS"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 8,
+      "pipeline_depth": 2,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Grid": "codebook"
     }
   },
   "iq4_xs_dot_rows": {
