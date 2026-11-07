@@ -3833,7 +3833,8 @@
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "tune_cpu": "sapphirerapids"
+      "tune_cpu": "sapphirerapids",
+      "pipeline_depth": 1
     },
     "arguments": {},
     "persistent_inputs": [
