@@ -1487,13 +1487,17 @@
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1
+      "rows": 1,
+      "chunk": 32,
+      "cache_hint": "streaming"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
