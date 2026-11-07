@@ -130,13 +130,20 @@
       "M": 1,
       "K": 4096,
       "format": "Q8_K",
-      "extreme_policy": "extrema"
+      "extreme_policy": "extrema",
+      "chunk": 64
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "unroll": 1,
+      "lmul_eighths": 8,
+      "pipeline_depth": 1,
+      "pointwise_issue_copies": 2,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "X": "X",
       "Output": "Y"
