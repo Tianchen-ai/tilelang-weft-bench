@@ -3546,14 +3546,16 @@
     "symbol": "affine",
     "constexprs": {
       "N": 4096,
-      "block": 128,
+      "block": 4096,
       "cpu_num_threads": 1
     },
     "grid": [
-      32
+      1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 64
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -3627,14 +3629,20 @@
       "M": 128,
       "H": 32,
       "P": 64,
-      "cpu_num_threads": 1
+      "cpu_num_threads": 1,
+      "rows_per_program": 128,
+      "heads_per_program": 32,
+      "pair_tile": 64
     },
     "grid": [
-      128,
-      32
+      1,
+      1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 64,
+      "native_loop_alignment": 32
+    },
     "arguments": {}
   },
   "softmax": {
@@ -3643,13 +3651,16 @@
     "constexprs": {
       "M": 4096,
       "N": 128,
-      "cpu_num_threads": 1
+      "cpu_num_threads": 1,
+      "rows_per_program": 4096
     },
     "grid": [
-      4096
+      1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -3669,14 +3680,20 @@
       "M": 128,
       "H": 32,
       "P": 64,
-      "cpu_num_threads": 1
+      "cpu_num_threads": 1,
+      "rows_per_program": 128,
+      "heads_per_program": 32,
+      "pair_tile": 64
     },
     "grid": [
-      128,
-      32
+      1,
+      1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 64,
+      "native_loop_alignment": 32
+    },
     "arguments": {}
   },
   "ime_centered": {
