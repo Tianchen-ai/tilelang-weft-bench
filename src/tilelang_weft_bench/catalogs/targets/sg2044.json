@@ -1466,17 +1466,21 @@
   },
   "iq1_m_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "iq1_m",
+    "symbol": "indexed_windows",
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1
+      "format": "IQ1_M"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "pipeline_depth": 1,
+      "unroll": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1520,17 +1524,21 @@
   },
   "iq2_s_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "iq2_s",
+    "symbol": "indexed_windows",
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1
+      "format": "IQ2_S"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "pipeline_depth": 1,
+      "unroll": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1600,17 +1608,21 @@
   },
   "iq3_s_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "iq3_s",
+    "symbol": "iq3_windows",
     "constexprs": {
       "M": 1024,
-      "K": 4096,
-      "rows": 1
+      "K": 4096
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 16,
+      "pipeline_depth": 1,
+      "unroll": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1625,17 +1637,21 @@
   },
   "iq3_xxs_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "iq3_xxs",
+    "symbol": "indexed_windows",
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1
+      "format": "IQ3_XXS"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "pipeline_depth": 1,
+      "unroll": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
