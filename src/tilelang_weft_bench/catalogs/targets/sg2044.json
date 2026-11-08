@@ -3443,15 +3443,18 @@
     "preparation": []
   },
   "q6_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "staged_projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q6_K",
-      "rows": 1,
-      "activation": "Q8_K",
+      "batch_rows": 16,
+      "staged_columns": 64,
+      "rows": 4,
+      "columns": 2,
+      "organization": "planes",
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal"
     },
@@ -3459,19 +3462,22 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 32,
+      "unroll": 4,
+      "pipeline_depth": 1,
+      "scalar_load_prime": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Output": "Y"
+    },
+    "workspaces": [],
+    "persistent_inputs": [],
+    "persistent_providers": {},
+    "preparation": []
   },
   "q8_0_projection_decode": {
     "source": "module:tilelang.weft.kernels.subblock_partials",
@@ -3683,19 +3689,13 @@
     "num_cpu_threads": 1,
     "backend_options": {
       "lmul_eighths": 32,
-      "native_loop_alignment": 0
+      "pointwise_issue_copies": 2
     },
-    "arguments": {
-      "Weights": "W",
-      "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+    "arguments": {},
+    "workspaces": [],
+    "persistent_inputs": [],
+    "persistent_providers": {},
+    "preparation": []
   },
   "rms_norm": {
     "source": "module:tilelang.weft.kernels.normalization",
