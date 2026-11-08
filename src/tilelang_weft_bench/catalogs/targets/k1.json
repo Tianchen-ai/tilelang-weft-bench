@@ -152,31 +152,31 @@
     }
   },
   "iq1_m_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
-    "constexprs": {
-      "M": 1,
-      "K": 4096,
-      "format": "IQ1_M",
-      "activation": "Q8_K",
-      "rows": 1
-    },
-    "grid": [
-      1
-    ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Signs": "signs"
+    },
+    "source": "module:tilelang.weft.kernels.indexed_lanes",
+    "symbol": "vec_dot",
+    "constexprs": {
+      "M": 1,
+      "K": 4096,
+      "format": "IQ1_M",
+      "groups_per_step": 16
+    },
+    "backend_options": {
+      "lmul_eighths": 64,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1
   },
   "iq1_m_dot_rows": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -950,58 +950,60 @@
     }
   },
   "q4_1_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
+    },
+    "source": "module:tilelang.weft.kernels.subblock_partials",
+    "symbol": "block32",
     "constexprs": {
       "M": 1,
       "K": 4096,
       "format": "Q4_1",
-      "activation": "Q8_1",
-      "rows": 1
+      "records": 1,
+      "partials": 1
+    },
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
     },
     "grid": [
       1
     ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
+    "num_cpu_threads": 1
+  },
+  "q4_1_dot_rows": {
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
-  },
-  "q4_1_dot_rows": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+      "Scale": "scale"
+    },
+    "source": "module:tilelang.weft.kernels.subblock_partials",
+    "symbol": "block32",
     "constexprs": {
       "M": 4096,
       "K": 4096,
       "format": "Q4_1",
-      "activation": "Q8_1",
-      "rows": 1
+      "records": 1,
+      "partials": 1
+    },
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
     },
     "grid": [
       1
     ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
-    "arguments": {
-      "Weights": "W",
-      "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+    "num_cpu_threads": 1
   },
   "q4_k_dot": {
     "source": "module:tilelang.weft.kernels.row_partials",
@@ -1121,58 +1123,60 @@
     "source": "module:tilelang.weft.kernels.subblock_partials"
   },
   "q5_1_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "arguments": {
+      "Weights": "W",
+      "Activation": "X",
+      "Output": "Y",
+      "Codebook": "codebook",
+      "Scale": "scale"
+    },
+    "source": "module:tilelang.weft.kernels.subblock_partials",
+    "symbol": "block32",
     "constexprs": {
       "M": 1,
       "K": 4096,
       "format": "Q5_1",
-      "activation": "Q8_1",
-      "rows": 1
+      "records": 1,
+      "partials": 1
+    },
+    "backend_options": {
+      "lmul_eighths": 16,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
     },
     "grid": [
       1
     ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
+    "num_cpu_threads": 1
+  },
+  "q5_1_dot_rows": {
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
-  },
-  "q5_1_dot_rows": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+      "Scale": "scale"
+    },
+    "source": "module:tilelang.weft.kernels.subblock_partials",
+    "symbol": "block32",
     "constexprs": {
       "M": 4096,
       "K": 4096,
       "format": "Q5_1",
-      "activation": "Q8_1",
-      "rows": 1
+      "records": 1,
+      "partials": 1
+    },
+    "backend_options": {
+      "lmul_eighths": 16,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
     },
     "grid": [
       1
     ],
-    "num_cpu_threads": 1,
-    "backend_options": {},
-    "arguments": {
-      "Weights": "W",
-      "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+    "num_cpu_threads": 1
   },
   "q5_k_dot": {
     "source": "module:tilelang.weft.kernels.packed",
