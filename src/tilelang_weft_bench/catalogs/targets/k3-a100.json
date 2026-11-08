@@ -2856,15 +2856,13 @@
     }
   },
   "q2_k_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "scale_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q2_K",
-      "rows": 1,
-      "activation": "Q8_K",
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal"
     },
@@ -2872,19 +2870,22 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 4,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Output": "Y"
+    },
+    "workspaces": [],
+    "persistent_inputs": [],
+    "persistent_providers": {},
+    "preparation": []
   },
   "q2_k_projection_prefill": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -2918,35 +2919,38 @@
     }
   },
   "q3_k_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "scaled_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q3_K",
-      "rows": 1,
-      "activation": "Q8_K",
       "extreme_policy": "extrema",
-      "inverse_policy": "reciprocal"
+      "inverse_policy": "reciprocal",
+      "organization": "lanes",
+      "lanes": 32
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 16,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Output": "Y"
+    },
+    "workspaces": [],
+    "persistent_inputs": [],
+    "persistent_providers": {},
+    "preparation": []
   },
   "q3_k_projection_prefill": {
     "source": "module:tilelang.weft.kernels.packed",
