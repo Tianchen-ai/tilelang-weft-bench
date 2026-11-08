@@ -1227,19 +1227,13 @@
     "backend_options": {
       "lmul_eighths": 16,
       "unroll": 16,
-      "pipeline_depth": 2,
+      "pipeline_depth": 1,
       "pointwise_issue_copies": 1
     },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q6_k_dot_rows": {
@@ -1889,54 +1883,50 @@
   },
   "q5_0_dequantize": {
     "source": "module:tilelang.weft.kernels.quantized",
-    "symbol": "dequantize",
+    "symbol": "field_windows",
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1,
-      "format": "Q5_0"
+      "format": "Q5_0",
+      "chunk": 32
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "native_loop_alignment": 0,
+      "unroll": 1,
+      "pipeline_depth": 1
+    },
     "arguments": {
       "Weights": "W",
-      "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q5_1_dequantize": {
     "source": "module:tilelang.weft.kernels.quantized",
-    "symbol": "dequantize",
+    "symbol": "field_windows",
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1,
-      "format": "Q5_1"
+      "format": "Q5_1",
+      "chunk": 32
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
-      "Activation": "X",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     }
   },
   "q5_k_dequantize": {
