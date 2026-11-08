@@ -901,6 +901,10 @@
       "records": 1,
       "partials": 1
     },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
     "backend_options": {
       "lmul_eighths": 8,
       "pipeline_depth": 1,
@@ -916,11 +920,7 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
-    },
-    "grid": [
-      1
-    ],
-    "num_cpu_threads": 1
+    }
   },
   "q4_0_dot_rows": {
     "source": "module:tilelang.weft.kernels.packed",
@@ -1073,6 +1073,10 @@
       "records": 1,
       "partials": 1
     },
+    "grid": [
+      1
+    ],
+    "num_cpu_threads": 1,
     "backend_options": {
       "lmul_eighths": 8,
       "pipeline_depth": 1,
@@ -1088,11 +1092,7 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
-    },
-    "grid": [
-      1
-    ],
-    "num_cpu_threads": 1
+    }
   },
   "q5_0_dot_rows": {
     "symbol": "block32",
