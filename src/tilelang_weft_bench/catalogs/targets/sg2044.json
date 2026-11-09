@@ -2994,34 +2994,34 @@
     }
   },
   "q3_k_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "module:tilelang.weft.kernels.row_partials",
+    "symbol": "scaled_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "Q3_K",
-      "rows": 1,
-      "activation": "Q8_K",
+      "organization": "planes",
       "extreme_policy": "extrema",
-      "inverse_policy": "reciprocal"
+      "inverse_policy": "reciprocal",
+      "planes": 2
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
+    },
+    "backend_options": {
+      "lmul_eighths": 32,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "scalar_load_prime": 1,
+      "native_loop_alignment": 0
     }
   },
   "q3_k_projection_prefill": {
