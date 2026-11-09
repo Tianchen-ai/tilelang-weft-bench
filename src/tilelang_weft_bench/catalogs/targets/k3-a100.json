@@ -2072,18 +2072,25 @@
   },
   "f16_projection_decode": {
     "source": "module:tilelang.weft.kernels.projection",
-    "symbol": "f16_projection",
+    "symbol": "staged_f16_projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
-      "block_k": 128
+      "staged_columns": 64,
+      "batch_rows": 1,
+      "rows": 1,
+      "columns": 4
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
