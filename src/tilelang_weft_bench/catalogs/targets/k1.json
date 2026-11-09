@@ -731,30 +731,30 @@
     "source": "module:tilelang.weft.kernels.subblock_partials"
   },
   "q1_0_dot": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "vec_dot",
+    "source": "module:tilelang.weft.kernels.subblock_partials",
+    "symbol": "window_dot",
     "constexprs": {
       "M": 1,
       "K": 4096,
       "format": "Q1_0",
-      "activation": "Q8_0",
-      "rows": 1
+      "rows_per_program": 1
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 4,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Scale": "scale"
     }
   },
   "q1_0_dot_rows": {
