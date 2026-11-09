@@ -12,8 +12,8 @@ constraint, grid and physical options. `show CASE` displays that binding.
 
 | Work | TileLang source | Included work |
 |---|---|---|
-| Packed single/multi-row dot, 24 formats | `packed.vec_dot` | Block-local field decode, typed products, scale/min branches and accumulation |
-| Packed projection prefill/decode | `packed.projection` | Activation quantization, caller-owned workspace, packed dot and output |
+| Packed single/multi-row dot, 24 formats | `subblock_partials`, `row_partials`, `indexed_lanes`, `packed` | Block-local field decode, typed products, scale/min branches and accumulation |
+| Packed projection prefill/decode | `short_projection`, `subblock_projection`, `indexed_projection`, `indexed_lanes`, `row_partials`, `panel_projection` | Activation quantization, caller-owned workspace, packed computation and output |
 | F16 projection | `projection` | Declared F16 activation conversion, or explicitly preserved F32 activation |
 | IME1/IME2 and AMX/VNNI tiles | `matrix`, `layouts` | Author-declared serialized layout and local contraction engine |
 | Normalization, RoPE, softmax, attention, GEMM | `normalization`, `attention`, `linear` | Full registered workload and its declared preparations |
@@ -50,10 +50,11 @@ extension list does not imply scalar execution. `instruction_path=not_observed`
 keeps conditional runtime instruction coverage explicit.
 
 The exported compiler metadata supplies the selected engines, instruction
-families and resource analysis. The CSV reads source parameters and physical
-options from each retained JIT request and checks them against the formal
-catalog binding. A case name containing `amx` or `ime` does not replace this
-artifact evidence.
+families and resource analysis. The CSV reads source parameters, physical options,
+toolchain flags, ABI argument mappings, grid and thread count from each retained
+JIT request and checks them against the formal catalog binding. Argument matching
+uses the actual typed ABI; unused format-table bindings do not become inputs.
+A case name containing `amx` or `ime` does not replace this artifact evidence.
 
 K3 A100 requires PID registration before CPU affinity. Its A100 group uses
 VLEN1024; X100 uses VLEN256. The target probe checks the selected execution core.
@@ -85,3 +86,11 @@ and protocol. Native warmup, sample counts and reference matching stay fixed.
 `disk_cache_restore_ms` measures the first JIT call in the fresh interpreter;
 `first_cache_hit_ms` measures the second call in the initial interpreter. Input
 preparation and Python process startup are outside both call windows.
+
+TileLang/Triton inheritance uses alternating native measurements on the same
+target. Each pair retains every sample and the same input, preparation, cache and
+warmup contract. Its TileLang library and Canonical/generated program must match
+the numerically checked source-JIT artifact. The per-case limit is
+`TileLang native time / Triton native time <= 1.03`.
+The external-library ratio is a separate comparison against the preserved
+reference observation; its candidate time is retained in `reference_candidate_us`.

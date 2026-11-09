@@ -22,7 +22,8 @@ FIELDS = (
     "cold_jit_ms", "compiler_api_ms", "first_call_outside_compiler_ms",
     "cold_child_cpu_ms", "cache_hit_child_cpu_ms", "first_cache_hit_ms", "disk_cache_restore_ms",
     "python_hot_ms", "python_hot_samples", "python_hot_protocol", "disk_cache_hit", "same_compiled_kernel", "native_entry",
-    "source", "symbol", "source_parameters", "backend_options", "binding_match", "used_extensions",
+    "source", "symbol", "source_parameters", "backend_options", "toolchain", "arguments",
+    "grid", "num_cpu_threads", "binding_match", "used_extensions",
     "required_extensions", "selected_physical_engines", "target_arch", "target_vlen_bits",
     "instruction_path", "instruction_families", "resource_analysis", "runtime_cpus", "tilelang_version",
     "warmup", "warmup_ms", "batch_ms", "sample_count", "data_cache", "sample_order", "native_protocol", "numerical_check_scope",
@@ -147,7 +148,7 @@ def checked_pair(source, pair):
     paired_artifact = Path(candidate.details["artifacts"]["weft"])
     if source.details.get("entry") != candidate.details.get("entry") or source.details.get("launch", {}) != candidate.details.get("launch", {}):
         raise ValueError(f"native pair changes the checked source launch: {label}")
-    for filename in ("kernel.weftir", "kernel.llir" if (source_artifact / "kernel.llir").is_file() else "kernel.c"):
+    for filename in ("kernel.weftir", "kernel.llir" if (source_artifact / "kernel.llir").is_file() else "kernel.c", "kernel.so"):
         if (source_artifact / filename).read_bytes() != (paired_artifact / filename).read_bytes():
             raise ValueError(f"native pair is not the source-JIT artifact: {label}: {filename}")
     return candidate, control
@@ -223,15 +224,24 @@ def records(runs, references, triton, *, partial, paired=None):
             metadata = artifact_metadata(row) if row.status == "ok" else {}
             if row.status == "ok":
                 request = source_request(row)
+                parameters = {item["name"] for item in request["invocation"]}
                 binding_match = (
                     "module:" + request["source_module"] == candidate["source"]
                     and request["symbol"] == candidate["symbol"]
                     and request["constexprs"] == candidate.get("constexprs", {})
                     and request["backend_options"] == candidate.get("backend_options", {})
+                    and request["toolchain"] == candidate.get("toolchain", {})
+                    and request["grid"] == candidate.get("grid", [1])
+                    and request["num_cpu_threads"] == candidate.get("num_cpu_threads", 1)
+                    and {key: value for key, value in request["arguments"].items() if key in parameters}
+                    == {key: value for key, value in candidate.get("arguments", {}).items() if key in parameters}
                 )
                 record.update(source="module:" + request["source_module"], symbol=request["symbol"],
                               source_parameters=json.dumps(request["constexprs"], sort_keys=True),
                               backend_options=json.dumps(request["backend_options"], sort_keys=True),
+                              toolchain=json.dumps(request["toolchain"], sort_keys=True),
+                              arguments=json.dumps(request["arguments"], sort_keys=True),
+                              grid=json.dumps(request["grid"]), num_cpu_threads=request["num_cpu_threads"],
                               binding_match=binding_match)
                 if not binding_match and not partial:
                     raise ValueError(f"executed binding differs from formal selection: {target}/{name}")
@@ -365,8 +375,8 @@ def public_observations(runs, references, triton, destination, paired):
             if path.is_file():
                 request = json.loads(path.read_text())
                 binding = {key: request[key] for key in (
-                    "producer", "source_module", "symbol", "constexprs", "backend_options",
-                    "grid", "num_cpu_threads",
+                    "producer", "source_module", "symbol", "constexprs", "backend_options", "toolchain",
+                    "arguments", "grid", "num_cpu_threads",
                 ) if key in request}
         return {
             **{key: getattr(row, key) for key in (

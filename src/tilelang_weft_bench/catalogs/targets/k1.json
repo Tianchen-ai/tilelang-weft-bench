@@ -3278,6 +3278,11 @@
       "partial_combine_policy": "independent-multilevel",
       "record_axis_policy": "within-record"
     },
+    "toolchain": {
+      "cflags": [
+        "-fno-slp-vectorize"
+      ]
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",

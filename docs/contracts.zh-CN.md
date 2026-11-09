@@ -11,8 +11,8 @@
 
 | 工作 | TileLang 源码 | 计入的工作 |
 |---|---|---|
-| 24 格式单行／多行 packed dot | `packed.vec_dot` | block 内字段解码、typed partial、scale/min 支路与累加 |
-| packed projection prefill/decode | `packed.projection` | activation 量化、调用方 workspace、packed dot 与输出 |
+| 24 格式单行／多行 packed dot | `subblock_partials`、`row_partials`、`indexed_lanes`、`packed` | block 内字段解码、typed partial、scale/min 支路与累加 |
+| packed projection prefill/decode | `short_projection`、`subblock_projection`、`indexed_projection`、`indexed_lanes`、`row_partials`、`panel_projection` | activation 量化、调用方 workspace、packed 计算与输出 |
 | F16 projection | `projection` | 声明的 F16 activation 转换，或明确保留 F32 activation |
 | IME1/IME2、AMX/VNNI tile | `matrix`、`layouts` | 作者声明的序列化布局及逐 contraction engine |
 | 归一化、RoPE、softmax、attention、GEMM | `normalization`、`attention`、`linear` | 登记的完整 workload 及准备工作 |
@@ -42,8 +42,9 @@ CSV 的 `used_extensions`、`required_extensions` 表示产物的附加扩展合
 明确保留条件指令路径尚未观察的状态。
 
 导出的编译 metadata 提供所选 engine、指令类别和资源分析。CSV 从每项保留的
-JIT request 读取源码参数与物理配置，并核对正式 catalog 绑定。用例名称中的
-`amx` 或 `ime` 不能代替实际产物证据。
+JIT request 读取源码参数、物理配置、工具链参数、ABI 参数映射、grid 和线程数，
+并核对正式 catalog 绑定。参数映射按实际 typed ABI 核对，未使用的格式查表绑定
+不会变成输入。用例名称中的 `amx` 或 `ime` 不能代替实际产物证据。
 
 K3 A100 必须先注册 PID，再设置 affinity。A100 核组为 VLEN1024，X100 为 VLEN256。
 目标探测检查实际执行核心。同一机器同时只运行一组性能队列。
@@ -68,3 +69,9 @@ Python 热调用按所需 batch 时间形成采样预算，较长的调用减少
 样本数和协议；原生测量的预热、样本数及参考匹配保持原合同。
 `disk_cache_restore_ms` 为新解释器中的第一次 JIT 调用；`first_cache_hit_ms` 为
 初始解释器中的第二次调用。输入准备与 Python 进程启动均不计入这两个调用窗口。
+
+TileLang/Triton 性能继承采用同一目标机上的原生交替测量，保留全部样本，
+输入、准备、缓存和预热合同一致。配对中的 TileLang 原生库及 Canonical／生成程序
+必须与已完成数值检查的源码 JIT 产物一致。逐项门槛为
+`TileLang 原生耗时 / Triton 原生耗时 <= 1.03`。
+外部库倍率另行采用保留的参考记录，对应候选耗时保存在 `reference_candidate_us`。
