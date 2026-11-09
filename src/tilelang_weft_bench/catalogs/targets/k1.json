@@ -1550,28 +1550,30 @@
   },
   "iq2_xs_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "iq2_indexed",
+    "symbol": "iq2_windows",
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "rows": 1,
-      "format": "IQ2_XS"
+      "format": "IQ2_XS",
+      "product_dtype": "int32"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 4,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0,
+      "pointwise_issue_copies": 1,
+      "max_widening_combine_groups": 2
+    },
     "arguments": {
       "Weights": "W",
-      "Activation": "X",
       "Output": "Y",
       "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Signs": "signs"
     }
   },
   "iq2_xxs_dequantize": {
