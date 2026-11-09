@@ -3877,7 +3877,13 @@
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "matrix_extension": "spacemit-ime1"
+      "matrix_extension": "spacemit-ime1",
+      "lmul_eighths": 8,
+      "pipeline_depth": 1,
+      "unroll": 1,
+      "pointwise_issue_copies": 1,
+      "max_widening_combine_groups": 2,
+      "native_loop_alignment": 0
     },
     "arguments": {}
   },
