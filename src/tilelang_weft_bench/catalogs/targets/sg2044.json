@@ -2222,35 +2222,39 @@
     }
   },
   "iq1_s_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
+    "source": "module:tilelang.weft.kernels.indexed_lanes",
     "symbol": "projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "IQ1_S",
-      "rows": 1,
-      "activation": "Q8_K",
-      "extreme_policy": "extrema",
-      "inverse_policy": "reciprocal"
+      "groups_per_step": 8,
+      "row_calls": false,
+      "extreme_policy": "extrema"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "lmul_eighths": 16,
+      "lmul_eighths": 64,
       "unroll": 1,
       "pipeline_depth": 1,
-      "pointwise_issue_copies": 1
+      "native_loop_alignment": 0
     },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Powers": "powers"
-    }
+      "Grid": "grid",
+      "Signs": "signs"
+    },
+    "workspaces": [],
+    "persistent_inputs": [],
+    "persistent_providers": {},
+    "preparation": []
   },
   "iq2_s_projection_decode": {
     "source": "module:tilelang.weft.kernels.indexed_lanes",
