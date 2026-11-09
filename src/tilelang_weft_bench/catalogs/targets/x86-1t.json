@@ -2054,7 +2054,8 @@
       "affine": false,
       "tile_rows": 4,
       "columns": 16,
-      "engine": "vector"
+      "engine": "vector",
+      "dot_width": 32
     },
     "grid": [
       1
@@ -2074,7 +2075,8 @@
       "affine": false,
       "tile_rows": 1,
       "columns": 16,
-      "engine": "vector"
+      "engine": "vector",
+      "dot_width": 32
     },
     "grid": [
       1
@@ -2094,7 +2096,8 @@
       "affine": true,
       "tile_rows": 4,
       "columns": 16,
-      "engine": "vector"
+      "engine": "vector",
+      "dot_width": 32
     },
     "grid": [
       1
@@ -2114,7 +2117,8 @@
       "affine": true,
       "tile_rows": 1,
       "columns": 16,
-      "engine": "vector"
+      "engine": "vector",
+      "dot_width": 32
     },
     "grid": [
       1
@@ -2207,7 +2211,8 @@
       "N": 4096,
       "K": 4096,
       "format": "Q1_0",
-      "columns": 16
+      "columns": 16,
+      "organization": "records"
     },
     "grid": [
       1
@@ -3603,7 +3608,8 @@
       "N": 4096,
       "K": 4096,
       "format": "NVFP4",
-      "columns": 16
+      "columns": 16,
+      "organization": "records"
     },
     "grid": [
       1
@@ -3628,7 +3634,8 @@
       "N": 4096,
       "K": 4096,
       "format": "NVFP4",
-      "columns": 16
+      "columns": 16,
+      "organization": "records"
     },
     "grid": [
       1
