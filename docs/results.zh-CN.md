@@ -84,7 +84,7 @@ x86 编译器修复另外使用前后两版 core 降低了全部 147 份 Canonic
 | K3 A100 | GGML/SpacemiT `6df9f75`、已登记的 RVV 补丁与 IME2 入口 |
 | x86 | GGML `620d222`；两个选定的 typed dense 用例使用 oneDNN `3.13.4` |
 
-共同引擎的[参考目录](https://github.com/Tianchen-ai/triton-weft-bench/blob/codex/tilelang-weft/src/weft_bench/catalogs/references.json)
+共同引擎的[参考目录](https://github.com/Tianchen-ai/triton-weft-bench/blob/main/src/weft_bench/catalogs/references.json)
 定义源码、调用边界与准备协议。各 baseline 保留原构建和原观测，本轮按匹配合同复用。
 OpenBLAS 仍是已登记的可选参考；本次正式选择使用上表中的入口。
 

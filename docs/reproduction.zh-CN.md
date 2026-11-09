@@ -68,12 +68,22 @@ python -m tilelang_weft_bench.report \
   --run k1=output/current/k1/selected --reference k1=output/baselines/k1 \
   --run k3-a100=output/current/k3-a100/selected --reference k3-a100=output/baselines/k3-a100 \
   --run x86-1t=output/current/x86-1t/selected --reference x86-1t=output/baselines/x86-1t \
+  --paired sg2044=output/current/sg2044/paired \
+  --paired k1=output/current/k1/paired \
+  --paired k3-a100=output/current/k3-a100/paired \
+  --paired x86-1t=output/current/x86-1t/paired \
   --triton x86-1t=output/comparisons/x86-1t --plot --output output/reports/latest
 ```
 
 绘图扩展安装在报告主机；执行机使用普通 Bench 包即可。
 
-正式汇总拒绝缺少 JIT／缓存／热调用证据、native 样本或必要参考的记录。
+`paired` 结果包含 `tilelang_native` 与 `triton_control` 记录，通过共同引擎的
+`--sample-order alternating` 按同一 workload 合同测量。候选使用已检查的 JIT
+导出产物，对照使用选定的 Triton 产物。`checked_pair` 核对原生库和生成程序
+与源码 JIT 记录一致。
+
+正式汇总拒绝缺少 JIT／缓存／热调用证据、native 样本或必要参考的记录，
+也拒绝任何超过 Triton 3% 门槛的用例。
 开发时 `--partial` 明确保留不完整状态。projection prefill 沿用 64 个输出抽样，
 并检查所有输出有限；decode 检查全部列。量化 activation 字节按目标声明的
 storage 规则进行检查。

@@ -98,7 +98,7 @@ lowering. Conditional runtime instruction observations have a separate field.
 | K3 A100 | GGML/SpacemiT revision `6df9f75`, recorded RVV patches and IME2 entries |
 | x86 | GGML revision `620d222`; oneDNN `3.13.4` for the two selected typed dense cases |
 
-The shared engine's [reference catalog](https://github.com/Tianchen-ai/triton-weft-bench/blob/codex/tilelang-weft/src/weft_bench/catalogs/references.json)
+The shared engine's [reference catalog](https://github.com/Tianchen-ai/triton-weft-bench/blob/main/src/weft_bench/catalogs/references.json)
 defines source locations, function boundaries and preparation protocols. Each
 baseline retains its original build and observation; this campaign reuses those
 measurements under the matched contract. OpenBLAS remains an available registered

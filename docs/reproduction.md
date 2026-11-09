@@ -80,14 +80,25 @@ python -m tilelang_weft_bench.report \
   --run k1=output/current/k1/selected --reference k1=output/baselines/k1 \
   --run k3-a100=output/current/k3-a100/selected --reference k3-a100=output/baselines/k3-a100 \
   --run x86-1t=output/current/x86-1t/selected --reference x86-1t=output/baselines/x86-1t \
+  --paired sg2044=output/current/sg2044/paired \
+  --paired k1=output/current/k1/paired \
+  --paired k3-a100=output/current/k3-a100/paired \
+  --paired x86-1t=output/current/x86-1t/paired \
   --triton x86-1t=output/comparisons/x86-1t --plot --output output/reports/latest
 ```
 
 The plotting extra is needed on the report host. Execution hosts use the ordinary
 Bench package.
 
+The `paired` runs contain `tilelang_native` and `triton_control` observations,
+measured by the shared engine with `--sample-order alternating` and the same
+workload contract. Export the checked JIT artifact for the candidate and retain
+the selected Triton artifact for the control. `checked_pair` verifies the native
+library and generated program against the source-JIT observation.
+
 Final reporting rejects incomplete JIT/cache/hot-call evidence, missing native
-samples and unmatched required references. `--partial` retains incomplete rows
+samples, unmatched required references and any case above the 3% Triton limit.
+`--partial` retains incomplete rows
 explicitly during development. Projection prefill uses the existing 64-output
 sample and checks every output for finiteness; decode checks every column.
 Quantized activation bytes are checked against the declared target storage rule.
