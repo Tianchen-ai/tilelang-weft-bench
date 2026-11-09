@@ -2593,35 +2593,40 @@
     "preparation": []
   },
   "iq4_nl_projection_decode": {
-    "source": "module:tilelang.weft.kernels.packed",
+    "source": "module:tilelang.weft.kernels.subblock_partials",
     "symbol": "projection",
     "constexprs": {
       "M": 1,
       "N": 4096,
       "K": 4096,
       "format": "IQ4_NL",
-      "rows": 1,
-      "activation": "Q8_0",
       "extreme_policy": "extrema",
+      "records": 1,
+      "partials": 1,
       "inverse_policy": "reciprocal"
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "native_loop_alignment": 0,
+      "unroll": 1,
+      "pipeline_depth": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
       "Scale": "scale",
-      "HalfBits": "f16_bits",
       "Powers": "powers"
-    }
+    },
+    "workspaces": [],
+    "persistent_inputs": [],
+    "preparation": []
   },
   "iq4_nl_projection_prefill": {
     "source": "module:tilelang.weft.kernels.short_projection",
