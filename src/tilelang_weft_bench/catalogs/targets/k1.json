@@ -3231,15 +3231,17 @@
     }
   },
   "q5_0_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.packed",
-    "symbol": "projection",
+    "source": "/home/kingdom/phdworks/tilelang-weft/.local/release-environment/lib/python3.10/site-packages/tilelang/weft/kernels/short_projection.py",
+    "symbol": "staged_projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q5_0",
-      "rows": 1,
-      "activation": "Q8_0",
+      "batch_rows": 16,
+      "staged_columns": 32,
+      "rows": 4,
+      "columns": 2,
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal"
     },
@@ -3247,19 +3249,25 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "scalar_load_prime": 0,
+      "partial_combine_policy": "independent-multilevel",
+      "record_axis_policy": "within-record"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
       "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
-    }
+      "Scale": "scale"
+    },
+    "workspaces": [],
+    "persistent_inputs": [],
+    "preparation": []
   },
   "q5_1_projection_decode": {
     "source": "module:tilelang.weft.kernels.packed",
