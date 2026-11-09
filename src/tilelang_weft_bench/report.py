@@ -168,7 +168,7 @@ def records(runs, references, triton, *, partial, paired=None):
             candidate = selected["candidate"]
             record = dict.fromkeys(FIELDS, "")
             record.update(target=target, case=name, shape=json.dumps(selected["shape"], sort_keys=True),
-                          scope=selected["scope"], status="not_executed", reference=selected["reference"] or "",
+                          scope=selected["scope"], status="no_selected_observation", reference=selected["reference"] or "",
                           reference_match="unmatched" if selected["reference"] else "catalog_gap",
                           source=candidate["source"], symbol=candidate["symbol"],
                           source_parameters=json.dumps(candidate.get("constexprs", {}), sort_keys=True),
