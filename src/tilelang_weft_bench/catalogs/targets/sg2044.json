@@ -573,7 +573,12 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "lmul_eighths": 16,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "pointwise_issue_copies": 1
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",

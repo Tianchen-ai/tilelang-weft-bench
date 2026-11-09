@@ -3407,7 +3407,7 @@
     }
   },
   "q6_k_projection_decode": {
-    "source": "/home/kingdom/phdworks/tilelang-weft/.local/release-environment/lib/python3.10/site-packages/tilelang/weft/kernels/row_partials.py",
+    "source": "module:tilelang.weft.kernels.row_partials",
     "symbol": "scaled_projection",
     "constexprs": {
       "M": 1,
