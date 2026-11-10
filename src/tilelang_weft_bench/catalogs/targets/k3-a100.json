@@ -1300,6 +1300,11 @@
       "Weights": "W",
       "Activation": "X",
       "Output": "Y"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fno-unroll-loops"
+      ]
     }
   },
   "q6_k_dot_rows": {
@@ -3803,6 +3808,11 @@
     "backend_options": {
       "lmul_eighths": 64,
       "pointwise_issue_copies": 2
+    },
+    "toolchain": {
+      "cflags": [
+        "-fno-unroll-loops"
+      ]
     }
   },
   "rms_norm": {
