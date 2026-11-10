@@ -2586,7 +2586,7 @@
   },
   "q2_k_projection_prefill": {
     "source": "module:tilelang.weft.kernels.panel_projection",
-    "symbol": "projection",
+    "symbol": "record_projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
@@ -2595,9 +2595,7 @@
       "rows": 16,
       "columns": 16,
       "engine": "auto",
-      "extreme_policy": "first",
-      "inverse_policy": "direct",
-      "unroll_decode": true
+      "records": 2
     },
     "grid": [
       1
@@ -2608,13 +2606,14 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Codebook": "codebook"
+      "Output": "Y"
     },
     "workspaces": [
       "Panel",
       "PackedActivation",
-      "ActivationSums"
+      "WeightScales",
+      "Minima",
+      "MinimumScales"
     ]
   },
   "q3_k_projection_decode": {
@@ -2840,7 +2839,7 @@
   },
   "q6_k_projection_prefill": {
     "source": "module:tilelang.weft.kernels.panel_projection",
-    "symbol": "projection",
+    "symbol": "record_projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
@@ -2849,8 +2848,7 @@
       "rows": 16,
       "columns": 16,
       "engine": "auto",
-      "extreme_policy": "first",
-      "inverse_policy": "direct"
+      "records": 2
     },
     "grid": [
       1
@@ -2861,18 +2859,14 @@
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y",
-      "Grid": "grid",
-      "Signs": "signs",
-      "Codebook": "codebook",
-      "Scale": "scale",
-      "HalfBits": "f16_bits",
-      "Powers": "powers"
+      "Output": "Y"
     },
     "workspaces": [
       "Panel",
       "PackedActivation",
-      "ActivationSums"
+      "WeightScales",
+      "Minima",
+      "MinimumScales"
     ]
   },
   "iq1_s_projection_decode": {

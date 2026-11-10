@@ -127,7 +127,16 @@ runs. Fixed reference libraries and original numerical contracts are retained.
 ## Reproduce a row
 
 Identify the program with `target`, `case`, `shape`, `scope`, `source_parameters`
-and `backend_options`. `native_us` and `reference_us` determine the native ratio.
+and `backend_options`. The two native comparisons retain their own samples:
+
+- `native_us / triton_native_us` is the TileLang/Triton inheritance ratio from
+  alternating calls in the same session. Each case passes at or below 1.03.
+- `reference_us / reference_candidate_us` is the external-reference speedup.
+  `reference_candidate_us` is the source-JIT run's exported native workload;
+  `reference_match` identifies its matched fixed reference.
+
+All samples remain available in `observations.json`. Timings from the two
+comparison sessions are not mixed into a third ratio.
 `cold_jit_ms`, `disk_cache_restore_ms`, `first_cache_hit_ms` and `python_hot_ms`
 describe the separate user-facing JIT path.
 The cold and fresh-process cache metrics include their first complete workload

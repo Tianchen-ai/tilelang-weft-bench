@@ -106,7 +106,15 @@ IQ1_S 程序触发的 LLVM 23 指令选择崩溃。
 ## 复现一项结果
 
 通过 `target`、`case`、`shape`、`scope`、`source_parameters` 和
-`backend_options` 确定程序。`native_us` 与 `reference_us` 决定原生倍率。
+`backend_options` 确定程序。两种原生比较分别保留各自的样本：
+
+- `native_us / triton_native_us` 是同场交替调用得到的 TileLang/Triton
+  性能继承比例，每项不超过 1.03 才达标。
+- `reference_us / reference_candidate_us` 是外部参考倍率。
+  `reference_candidate_us` 来自源码 JIT 运行后导出的原生 workload，
+  `reference_match` 标明与之匹配的固定参考。
+
+`observations.json` 保留全部样本，不把两场比较的耗时混成第三个倍率。
 `cold_jit_ms`、`disk_cache_restore_ms`、`first_cache_hit_ms` 和
 `python_hot_ms` 分别描述正常用户 JIT 路径。
 冷调用和新进程缓存指标都包含第一次完整 workload 调用，分别对应编译并启动、
