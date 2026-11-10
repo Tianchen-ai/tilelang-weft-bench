@@ -2986,19 +2986,20 @@
     }
   },
   "q2_k_projection_prefill": {
-    "source": "module:tilelang.weft.kernels.row_partials",
-    "symbol": "staged_projection",
+    "source": "module:tilelang.weft.kernels.panel_projection",
+    "symbol": "projection",
     "constexprs": {
       "M": 128,
       "N": 4096,
       "K": 4096,
       "format": "Q2_K",
-      "rows": 1,
-      "columns": 2,
-      "batch_rows": 32,
-      "staged_columns": 32,
+      "rows": 4,
+      "columns": 4,
+      "engine": "matrix",
       "extreme_policy": "extrema",
-      "inverse_policy": "reciprocal"
+      "inverse_policy": "reciprocal",
+      "panel_dtype": "int8",
+      "unroll_decode": true
     },
     "grid": [
       1
@@ -3006,15 +3007,22 @@
     "num_cpu_threads": 1,
     "backend_options": {
       "lmul_eighths": 8,
-      "unroll": 4,
-      "pipeline_depth": 1
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "matrix_extension": "spacemit-ime1"
     },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
       "Quantized": "Xq",
-      "Output": "Y"
-    }
+      "Output": "Y",
+      "Codebook": "codebook"
+    },
+    "workspaces": [
+      "Panel",
+      "PackedActivation",
+      "ActivationSums"
+    ]
   },
   "q3_k_projection_decode": {
     "source": "module:tilelang.weft.kernels.row_partials",
