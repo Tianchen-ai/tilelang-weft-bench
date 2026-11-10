@@ -84,6 +84,11 @@
       "X": "X",
       "W": "W",
       "Y": "Y"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "q8_0_quantize": {
@@ -466,6 +471,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq3_xxs_dot": {
@@ -499,10 +509,10 @@
     "constexprs": {
       "M": 4096,
       "K": 4096,
-      "rows_per_program": 1
+      "rows_per_program": 4
     },
     "grid": [
-      4096
+      1024
     ],
     "num_cpu_threads": 1,
     "backend_options": {
@@ -517,6 +527,11 @@
       "Output": "Y",
       "Grid": "grid",
       "Signs": "signs"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq4_nl_dot": {
@@ -1286,6 +1301,11 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "q8_0_dot": {
@@ -3794,26 +3814,28 @@
   },
   "rope_split": {
     "source": "module:tilelang.weft.kernels.attention",
-    "symbol": "rope",
+    "symbol": "rope_runtime",
     "constexprs": {
-      "M": 128,
-      "H": 32,
-      "P": 64,
-      "cpu_num_threads": 1,
-      "rows_per_program": 128,
-      "heads_per_program": 32,
-      "pair_tile": 64
+      "pair_tile": 32,
+      "cpu_num_threads": 1
     },
     "grid": [
-      1,
       1
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "lmul_eighths": 64,
-      "native_loop_alignment": 32
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0,
+      "pointwise_issue_copies": 1
     },
-    "arguments": {}
+    "arguments": {},
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "softmax": {
     "source": "module:tilelang.weft.kernels.attention",
@@ -3845,26 +3867,28 @@
   },
   "rope_full": {
     "source": "module:tilelang.weft.kernels.attention",
-    "symbol": "rope",
+    "symbol": "rope_runtime",
     "constexprs": {
-      "M": 128,
-      "H": 32,
-      "P": 64,
-      "cpu_num_threads": 1,
-      "rows_per_program": 128,
-      "heads_per_program": 32,
-      "pair_tile": 64
+      "pair_tile": 32,
+      "cpu_num_threads": 1
     },
     "grid": [
-      1,
       1
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "lmul_eighths": 64,
-      "native_loop_alignment": 32
+      "lmul_eighths": 8,
+      "unroll": 1,
+      "pipeline_depth": 1,
+      "native_loop_alignment": 0,
+      "pointwise_issue_copies": 1
     },
-    "arguments": {}
+    "arguments": {},
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "ime_centered": {
     "source": "module:tilelang.weft.kernels.matrix",
