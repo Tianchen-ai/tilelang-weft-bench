@@ -16,9 +16,9 @@
     "num_cpu_threads": 1,
     "backend_options": {
       "lmul_eighths": 8,
-      "unroll": 8,
+      "unroll": 4,
       "pipeline_depth": 1,
-      "native_loop_alignment": 0,
+      "native_loop_alignment": 64,
       "pointwise_issue_copies": 1
     },
     "arguments": {
@@ -26,6 +26,11 @@
       "Activation": "X",
       "Quantized": "Xq",
       "Output": "Y"
+    },
+    "toolchain": {
+      "cflags": [
+        "-mtune=spacemit-a100"
+      ]
     }
   },
   "q4_k_projection_prefill": {
@@ -1094,6 +1099,11 @@
       "Weights": "W",
       "Activation": "X",
       "Output": "Y"
+    },
+    "toolchain": {
+      "cflags": [
+        "-mtune=spacemit-a100"
+      ]
     }
   },
   "q5_0_dot": {
@@ -1259,6 +1269,11 @@
       "Weights": "W",
       "Activation": "X",
       "Output": "Y"
+    },
+    "toolchain": {
+      "cflags": [
+        "-mtune=spacemit-a100"
+      ]
     }
   },
   "q6_k_dot": {
@@ -2539,6 +2554,11 @@
       "Output": "Y",
       "Grid": "grid",
       "Signs": "signs"
+    },
+    "toolchain": {
+      "cflags": [
+        "-mtune=spacemit-a100"
+      ]
     }
   },
   "iq3_s_projection_prefill": {
