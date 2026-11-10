@@ -17,7 +17,7 @@ from .catalogs import target_catalog, target_names
 FIELDS = (
     "target", "case", "shape", "scope", "status", "correctness", "native_us",
     "reference", "reference_us", "reference_candidate_us", "reference_speedup", "reference_match",
-    "triton_native_us", "triton_match", "source_jit_native_us", "triton_historical_us",
+    "triton_native_us", "triton_match", "triton_control_note", "source_jit_native_us", "triton_historical_us",
     "tilelang_over_triton", "triton_gap_percent", "parity_status",
     "cold_jit_ms", "compiler_api_ms", "first_call_outside_compiler_ms",
     "cold_child_cpu_ms", "cache_hit_child_cpu_ms", "first_cache_hit_ms", "disk_cache_restore_ms",
@@ -214,6 +214,10 @@ def records(runs, references, triton, *, partial, paired=None):
                               triton_match="paired", tilelang_over_triton=ratio,
                               triton_gap_percent=(ratio - 1) * 100,
                               parity_status="passed" if ratio <= 1.03 else "over_3_percent")
+                control_metadata = json.loads(
+                    (Path(control.details["artifacts"]["weft"]) / "triton.json").read_text()
+                )
+                record["triton_control_note"] = control_metadata.get("control_correction", {}).get("reason", "")
             if not partial and record["parity_status"] != "passed":
                 raise ValueError(f"unresolved Triton performance inheritance: {target}/{name}: {record['parity_status']}")
             jit = row.details.get("jit", {})
@@ -441,6 +445,9 @@ def public_observations(runs, references, triton, destination, paired):
             if name in pairs:
                 candidate, control = checked_pair(row, pairs[name])
                 entry["native_pair"] = {"tilelang": retained(candidate), "triton": retained(control)}
+                metadata = json.loads((Path(control.details["artifacts"]["weft"]) / "triton.json").read_text())
+                if "control_correction" in metadata:
+                    entry["native_pair"]["triton"]["control_correction"] = metadata["control_correction"]
             observations.append(entry)
     (destination / "observations.json").write_text(json.dumps({
         "schema": 1,
