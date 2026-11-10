@@ -2573,7 +2573,12 @@
     },
     "workspaces": [],
     "persistent_inputs": [],
-    "preparation": []
+    "preparation": [],
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "iq3_xxs_projection_decode": {
     "source": "module:tilelang.weft.kernels.indexed_lanes",
