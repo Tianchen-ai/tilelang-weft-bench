@@ -1908,7 +1908,8 @@
     "constexprs": {
       "M": 1024,
       "K": 4096,
-      "format": "Q4_K"
+      "format": "Q4_K",
+      "code_dtype": "int32"
     },
     "grid": [
       1
@@ -2878,7 +2879,10 @@
       "N": 4096,
       "K": 4096,
       "format": "NVFP4",
-      "columns": 16
+      "columns": 4,
+      "rows": 2,
+      "batch_rows": 16,
+      "staged_columns": 32
     },
     "grid": [
       1
