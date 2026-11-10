@@ -3279,7 +3279,7 @@
       "N": 4096,
       "K": 4096,
       "format": "Q5_0",
-      "batch_rows": 16,
+      "batch_rows": 4,
       "staged_columns": 32,
       "rows": 4,
       "columns": 2,
@@ -4019,6 +4019,11 @@
     "backend_options": {
       "matrix_extension": "spacemit-ime1"
     },
-    "arguments": {}
+    "arguments": {},
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   }
 }
