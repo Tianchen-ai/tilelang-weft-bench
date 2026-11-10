@@ -73,7 +73,8 @@
       "tile_m": 64,
       "tile_n": 64,
       "rows": 64,
-      "columns": 64
+      "columns": 64,
+      "dynamic_k": true
     },
     "grid": [
       1
@@ -1136,6 +1137,12 @@
       "Scale": "scale",
       "HalfBits": "f16_bits",
       "Powers": "powers"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize",
+        "-fno-unroll-loops"
+      ]
     }
   },
   "q5_0_dot_rows": {
