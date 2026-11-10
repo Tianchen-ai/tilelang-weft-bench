@@ -1276,11 +1276,16 @@
     ],
     "num_cpu_threads": 1,
     "backend_options": {
-      "unroll": 2,
+      "unroll": 1,
       "lmul_eighths": 32,
       "pipeline_depth": 1,
       "pointwise_issue_copies": 1,
       "native_loop_alignment": 0
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     },
     "arguments": {
       "Weights": "W",
