@@ -2197,7 +2197,7 @@
       "format": "IQ1_M",
       "batch_rows": 16,
       "staged_columns": 16,
-      "groups_per_step": 16,
+      "groups_per_step": 8,
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal"
     },
@@ -3009,7 +3009,7 @@
       "organization": "planes",
       "extreme_policy": "extrema",
       "inverse_policy": "reciprocal",
-      "rows": 1,
+      "rows": 2,
       "columns": 2,
       "batch_rows": 32,
       "staged_columns": 32
