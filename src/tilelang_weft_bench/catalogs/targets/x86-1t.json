@@ -1183,7 +1183,9 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -2934,7 +2936,9 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -3688,7 +3692,9 @@
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
