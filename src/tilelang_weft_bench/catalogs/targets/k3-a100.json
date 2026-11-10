@@ -277,6 +277,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq2_s_dot_rows": {
@@ -300,6 +305,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq2_xs_dot": {
@@ -434,6 +444,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq3_s_dot_rows": {
@@ -458,6 +473,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq3_xxs_dot": {
@@ -597,6 +617,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "codebook"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq4_xs_dot_rows": {
@@ -620,6 +645,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "codebook"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "mxfp4_dot": {
@@ -3829,7 +3859,12 @@
     ],
     "num_cpu_threads": 1,
     "backend_options": {},
-    "arguments": {}
+    "arguments": {},
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "softmax": {
     "source": "module:tilelang.weft.kernels.attention",
@@ -3871,7 +3906,12 @@
     ],
     "num_cpu_threads": 1,
     "backend_options": {},
-    "arguments": {}
+    "arguments": {},
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "causal_attention": {
     "source": "module:tilelang.weft.kernels.attention",
