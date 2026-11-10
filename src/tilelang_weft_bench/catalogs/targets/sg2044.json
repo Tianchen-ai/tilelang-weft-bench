@@ -284,6 +284,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq2_s_dot_rows": {
@@ -450,6 +455,11 @@
       "Activation": "X",
       "Output": "Y",
       "Grid": "grid"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq3_s_dot_rows": {
@@ -502,6 +512,11 @@
       "Output": "Y",
       "Grid": "grid",
       "Signs": "signs"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq3_xxs_dot_rows": {
@@ -529,6 +544,11 @@
       "Output": "Y",
       "Grid": "grid",
       "Signs": "signs"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "iq4_nl_dot": {
@@ -794,6 +814,11 @@
       "Output": "Y",
       "Codebook": "codebook",
       "Scale": "scale"
+    },
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
     }
   },
   "q2_k_dot": {
@@ -2395,7 +2420,12 @@
     },
     "workspaces": [],
     "persistent_inputs": [],
-    "preparation": []
+    "preparation": [],
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "iq2_xxs_projection_decode": {
     "source": "module:tilelang.weft.kernels.indexed_lanes",
