@@ -292,7 +292,7 @@ def records(runs, references, triton, *, partial, paired=None):
 def save(rows, destination):
     destination.mkdir(parents=True, exist_ok=True)
     with (destination / "operators.csv").open("w", encoding="utf-8-sig", newline="") as stream:
-        writer = csv.DictWriter(stream, FIELDS)
+        writer = csv.DictWriter(stream, FIELDS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     summary = {}
@@ -487,9 +487,10 @@ def plot(rows, destination):
                         if row["target"] == target and row["tilelang_over_triton"] != "")
         if values:
             axes[0].step(values, [(i + 1) / len(values) for i in range(len(values))],
-                         where="post", linewidth=1.7, label=f"{target}: {len(values)} pairs")
+                         where="post", linewidth=1.7,
+                         label=f"{target}: {len(values)} pairs, median {statistics.median(values):.3g}")
     axes[0].axvline(1.03, color="#aa5b39", linewidth=1, linestyle="--", label="3% limit")
-    axes[0].set(xscale="log", xlabel="TileLang native time / Triton native time",
+    axes[0].set(xlim=(0, max(1.08, axes[0].get_xlim()[1])), xlabel="TileLang native time / Triton native time",
                 ylabel="Fraction of paired cases", title="Shared compiler performance inheritance")
     axes[0].grid(axis="x", alpha=0.18)
     axes[0].legend(fontsize=8)
