@@ -32,13 +32,16 @@
       "M": 1,
       "K": 4096,
       "format": "Q1_0",
-      "rows": 1
+      "rows": 1,
+      "sign_transfer": true
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -58,7 +61,8 @@
       "M": 4096,
       "K": 4096,
       "format": "Q1_0",
-      "rows": 1
+      "rows": 1,
+      "sign_transfer": true
     },
     "grid": [
       1
@@ -1018,13 +1022,16 @@
       "M": 1,
       "K": 4096,
       "format": "IQ2_S",
-      "rows": 1
+      "rows": 1,
+      "windows": 2
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1040,13 +1047,16 @@
       "M": 4096,
       "K": 4096,
       "format": "IQ2_S",
-      "rows": 1
+      "rows": 2,
+      "windows": 2
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
@@ -1869,11 +1879,12 @@
       "M": 128,
       "N": 4096,
       "K": 4096,
-      "rows": 4,
-      "columns": 64,
+      "rows": 8,
+      "columns": 32,
       "block_k": 256,
       "weight_dtype": "float32",
-      "round_f16": false
+      "round_f16": false,
+      "unroll_k": 4
     },
     "grid": [
       1
@@ -1888,7 +1899,9 @@
       "PackedActivation"
     ],
     "num_cpu_threads": 1,
-    "backend_options": {}
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    }
   },
   "affine": {
     "source": "module:tilelang.weft.kernels.activation",
@@ -2187,13 +2200,16 @@
       "K": 4096,
       "format": "Q1_0",
       "columns": 1,
-      "records": 1
+      "records": 1,
+      "sign_transfer": true
     },
     "grid": [
       1
     ],
     "num_cpu_threads": 1,
-    "backend_options": {},
+    "backend_options": {
+      "tune_cpu": "sapphirerapids"
+    },
     "arguments": {
       "Weights": "W",
       "Activation": "X",
