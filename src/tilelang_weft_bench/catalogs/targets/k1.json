@@ -4005,7 +4005,12 @@
     "backend_options": {
       "matrix_extension": "spacemit-ime1"
     },
-    "arguments": {}
+    "arguments": {},
+    "toolchain": {
+      "cflags": [
+        "-fslp-vectorize"
+      ]
+    }
   },
   "ime_affine_decode": {
     "source": "module:tilelang.weft.kernels.matrix",

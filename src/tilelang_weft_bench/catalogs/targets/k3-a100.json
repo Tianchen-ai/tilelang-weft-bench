@@ -1726,9 +1726,8 @@
   },
   "iq4_xs_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "metadata_windows",
+    "symbol": "metadata_row",
     "constexprs": {
-      "M": 1024,
       "K": 4096,
       "format": "IQ4_XS"
     },
@@ -1775,9 +1774,8 @@
   },
   "nvfp4_dequantize": {
     "source": "module:tilelang.weft.kernels.codebook",
-    "symbol": "metadata_windows",
+    "symbol": "metadata_row",
     "constexprs": {
-      "M": 1024,
       "K": 4096,
       "format": "NVFP4"
     },
@@ -3991,7 +3989,8 @@
       "affine": false,
       "tile_rows": 4,
       "columns": 32,
-      "engine": "matrix"
+      "engine": "matrix",
+      "dot_width": 32
     },
     "grid": [
       1
