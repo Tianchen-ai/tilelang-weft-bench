@@ -32,12 +32,14 @@ Download the coordinated compiler and Bench assets. Pip selects the wheel
 matching the current Python ABI and host architecture from this directory:
 
 ```sh
-gh release download v0.1.15-weft.2 --repo Tianchen-ai/tilelang-weft \
+gh release download weft-parity --repo Tianchen-ai/tilelang-weft \
   --pattern '*.whl' --dir wheels
-gh release download v0.1.0 --repo Tianchen-ai/tilelang-weft-bench \
+gh release download weft-parity --repo Tianchen-ai/tilelang-weft-bench \
   --pattern '*.whl' --pattern constraints.txt --dir wheels
 python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
   tilelang tilelang-weft-bench
+python -m pip install --force-reinstall --no-deps --no-index --find-links ./wheels \
+  -c ./wheels/constraints.txt tilelang weft-core triton-weft-bench tilelang-weft-bench
 tilelang-weft-bench list --kind targets
 ```
 
@@ -58,6 +60,11 @@ the installed TileLang–Weft package and shared `weft-core` SDK.
 Each execution host needs its own matching native wheels. RISC-V Python ABIs,
 libc and x86 CPU features follow the individual wheel's release description.
 The core SDK provides Clang 23, its resource headers and OpenMP support.
+
+The coordinated core wheels cover x86-64 CPython 3.10 and RISC-V LP64D
+CPython 3.11/3.12/3.14. Shipped native libraries require glibc 2.34+ on x86-64,
+glibc 2.38+ on RISC-V, and GLIBCXX 3.4.30+. The TileLang wheel uses the stable
+CPython ABI for its host architecture; the core wheel matches the interpreter.
 
 ## Find and run an operator
 

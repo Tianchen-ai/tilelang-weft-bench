@@ -10,7 +10,8 @@ numerical checking, fresh-process cache restoration and native measurement.
 
 [Full operator CSV](assets/operators.csv) · [Summary](assets/summary.json) ·
 [Original candidate and reference samples](assets/observations.json) ·
-[Build and observation provenance](assets/provenance.json)
+[Build and observation provenance](assets/provenance.json) ·
+[Per-case final emission comparison](assets/compiler-emission.json)
 
 ## Coverage and native performance
 
@@ -18,11 +19,11 @@ All 553 cases completed their target-native source JIT and numerical checks.
 
 | Platform | JIT + numerical checks | Matched refs | Faster than ref | Median native speedup |
 |---|---:|---:|---:|---:|
-| SG2044 | 133/133 | 132 | 11 | 0.0580× |
-| K1 | 137/137 | 136 | 9 | 0.1143× |
-| K3 A100 | 136/136 | 135 | 10 | 0.1074× |
-| x86 | 147/147 | 140 | 11 | 0.0375× |
-| **Total** | **553/553** | **543** | **41** | — |
+| SG2044 | 133/133 | 132 | 106 | 1.3598× |
+| K1 | 137/137 | 136 | 104 | 1.3176× |
+| K3 A100 | 136/136 | 135 | 128 | 1.6569× |
+| x86 | 147/147 | 140 | 130 | 1.2917× |
+| **Total** | **553/553** | **543** | **468** | — |
 
 Speedup is **matched reference native time / TileLang native time**. Values above
 one favor TileLang. The platform median gives each matched case one observation.
@@ -40,32 +41,84 @@ These entries have no retained external observation matching the complete
 contract. The separately registered x86 F16 variants preserving F32 activations
 have their own matched comparisons.
 
-## Reading the performance gaps
+## Triton performance inheritance
 
-Normalization and activation quantization already benefit from the shared vector
-compiler. For example, x86 LayerNorm reaches 3.80× and softmax 5.10×; SG2044
-RMSNorm reaches 1.71× and LayerNorm 2.40× against their matched references.
-Packed dot, complete projection and several serialized matrix programs
-have substantial performance gaps. Native timings expose these gaps directly;
-cold compilation and Python calls have separate columns.
+![Matched TileLang and Triton native timings](assets/parity.svg)
 
-The current author programs make several relevant implementation choices:
+The selected 553 cases have a matched Triton control. Each TileLang native
+latency is at most **1.03 ×** its corresponding Triton latency. The control and
+candidate run in alternating order on shared inputs. The candidate is the exact
+native library exported by the checked TileLang source JIT.
 
-- [`packed.accumulate`](https://github.com/Tianchen-ai/tilelang-weft/blob/v0.1.15-weft.2/tilelang/weft/kernels/packed.py)
-  uses typed integer partials for Q4_K/Q6_K and F64 scaled accumulation. Its
-  general codebook path decodes 32 values, converts to F64 and reduces each segment.
-- `packed.projection` quantizes activations inside the invocation, then traverses
-  activation rows, output-column groups and packed records. Weight decoding is
-  inside this tree, limiting reuse across activation rows.
-- [`matrix.packed_x86`](https://github.com/Tianchen-ai/tilelang-weft/blob/v0.1.15-weft.2/tilelang/weft/kernels/matrix.py)
-  constructs 64-element operands per quantization group. Matrix instructions
-  accelerate the contraction; operand construction, packing and per-group
-  updates remain part of the complete workload.
+The two K3 Q1 controls were rebuilt from their retained Triton Canonical programs
+after the shared compiler's exact signed-I8 reduction repair. The older controls
+overflowed when negating `-128`; the endpoint input produced `-2048` instead of
+`0`. Both corrected frontends pass that input. `triton_historical_us` preserves
+the older timing, and `triton_control_note` identifies the corrected comparisons.
 
-These are source and generated-program observations. Their individual timing
-contributions require targeted optimization measurements. Retained artifacts and
-source parameters make that work reproducible. Triton timings are an independent
-comparison column; differences between author realizations remain explicit.
+| Platform | Matched native pairs | Within 3% |
+|---|---:|---:|
+| SG2044 | 133 | 133/133 |
+| K1 | 137 | 137/137 |
+| K3 A100 | 136 | 136/136 |
+| x86 | 147 | 147/147 |
+| Total | 553 | 553/553 |
+
+`native_us` and `triton_native_us` come from these pairs. External references
+retain their fixed library and observation identity: their ratio uses
+`reference_us / reference_candidate_us`. Cold JIT, cache restoration and Python
+calls have their own columns and are outside both native comparison windows.
+
+## Author programs and shared compilation
+
+TileLang imports native TIRx into the same Canonical compiler used by
+Triton–Weft. The complete packed workload retains its input preparation,
+Encoding, integer partials, scale/min branches and output update. Formal
+bindings select the program, tiling, preparation protocol and physical options
+for each target.
+
+- Short records and K/IQ formats use bounded entry/payload or plane Levels.
+  Typed I16/I32 partials finish before the declared floating update. Source
+  parameters expose record windows, row cohorts and reuse scopes.
+- Complete projections retain activation quantization inside the invocation.
+  Explicit weight and activation stages share encoded panels across the
+  author's row/column cohort. Persistent derived layouts have a separately
+  declared preparation protocol.
+- IME1, IME2, VNNI and AMX variants express their operand layouts and local
+  contraction intent in the author program. Shared physical passes select
+  instructions, local packing, conversions and resource handling.
+- Dynamic rotary traversal preserves runtime extents and both input snapshots
+  before output stores. Indexed programs retain explicit lookup widths and
+  record metadata reads; the Encoding supplies their storage geometry.
+
+Frontend repairs preserve scalar SSA, helper axes, identity slices, field
+projections and loop carries. Shared compiler repairs close scalar tuple packs,
+Boolean comparison layouts, integer reductions, alias facts and capture
+liveness. Grouped dense-memory transfers normalize the selected carrier before
+reading or writing; matrix-result pointwise operations preserve the ordered
+logical lane coordinates even when both operands occupy equally wide vectors.
+The compiler lowers these typed programs without dispatching by
+kernel or quantization-format name. Clang 23 settings are recorded per candidate.
+
+Shared widening reductions keep their declared integer partials. Their zero
+identity is a read-only RVV intrinsic operand, so LLVM can reuse it across the
+loop while the selected assembly preserves the reduction order. On SG2044,
+Q6_K dot measures **1.060 µs TileLang / 1.054 µs Triton** in the matched pair;
+the generated code removes repeated seed initialization and vector-state work.
+
+For indexed entry loads, the reduction selector also checks the complete live
+set and a bounded typed producer chain. When independent reductions fit, their
+intrinsics remain visible to LLVM so lookup supply can overlap computation.
+This consumes the existing physical operations, axes and lifetimes.
+
+For K1 Q2_K prefill, the selected author program folds each U2 code and U4 scale
+into an invocation-local I8 panel, whose exact range is `[0, 45]`. A matrix
+contraction consumes that panel across activation rows; the I16 block-sum
+correction keeps its vector route. The complete alternating native pair is
+**976.196 ms TileLang / 1446.994 ms Triton**, or **1.482×** over the retained Triton
+program. Activation quantization and panel population are included. The source
+organization provides the reuse; the common compiler preserves its Encoding,
+matrix layout, numerical branches and lane coordinates.
 
 ## Numerical coverage and execution evidence
 
@@ -80,10 +133,16 @@ the formal source binding. Source-equivalence audits identify observations
 retained across documentation changes or unchanged Canonical programs; their
 original package version remains recorded.
 
-For the x86 compiler repair, all 147 retained Canonical programs were lowered by
-both core versions. Four LLVM modules changed and those four cases were rerun;
-the remaining 143 modules were identical. The latest core changes are confined
-to x86 physical passes.
+Canonical and Physical audits identify programs affected by a compiler or author
+change. Targeted installed-package runs validate those paths; unchanged programs
+retain their original observations and package identity. Source bindings and
+the shared core revisions are recorded in the provenance export.
+
+The final compiler reimports all 553 selected original TIRx programs. Generated
+bodies match their checked artifacts: 357 are identical, and 196 differ only
+by read-only `restrict` qualifiers. Changed executable bodies were checked with
+the installed package and paired before selection. This preserves the measured
+evidence without repeatedly timing unchanged programs.
 
 `used_extensions` records IME/AMX requirements from the artifact.
 `selected_physical_engines`, architecture, VLEN and resource metadata describe its

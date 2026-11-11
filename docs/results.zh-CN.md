@@ -9,7 +9,8 @@
 
 [完整算子 CSV](assets/operators.csv) · [汇总](assets/summary.json) ·
 [候选与参考原始样本](assets/observations.json) ·
-[构建与测量来源](assets/provenance.json)
+[构建与测量来源](assets/provenance.json) ·
+[逐项最终代码比较](assets/compiler-emission.json)
 
 ## 覆盖范围与原生性能
 
@@ -17,11 +18,11 @@
 
 | 平台 | JIT 与数值检查 | 匹配参考 | 快于参考 | 原生倍率中位数 |
 |---|---:|---:|---:|---:|
-| SG2044 | 133/133 | 132 | 11 | 0.0580× |
-| K1 | 137/137 | 136 | 9 | 0.1143× |
-| K3 A100 | 136/136 | 135 | 10 | 0.1074× |
-| x86 | 147/147 | 140 | 11 | 0.0375× |
-| **合计** | **553/553** | **543** | **41** | — |
+| SG2044 | 133/133 | 132 | 106 | 1.3598× |
+| K1 | 137/137 | 136 | 104 | 1.3176× |
+| K3 A100 | 136/136 | 135 | 128 | 1.6569× |
+| x86 | 147/147 | 140 | 130 | 1.2917× |
+| **合计** | **553/553** | **543** | **468** | — |
 
 倍率定义为 **匹配参考原生耗时 / TileLang 原生耗时**，大于 1 表示 TileLang 更快。
 平台中位数对每个匹配用例取一个观测。单个 dot、完整 projection 和矩阵 tile
@@ -37,27 +38,68 @@
 这些入口没有与完整合同匹配的已保留外部观测。x86 另外登记的保留 F32 activation
 的 F16 变体有各自匹配的参考比较。
 
-## 性能差距的具体表现
+## Triton 性能继承
 
-归一化和 activation 量化已经从共享向量编译器获得收益。例如，x86 LayerNorm
-达到 3.80×、softmax 达到 5.10×；SG2044 RMSNorm 为 1.71×、LayerNorm 为 2.40×。
-这些倍率均使用各自匹配的原生参考。packed dot、完整
-projection 和部分序列化矩阵程序仍存在显著差距。原生耗时直接展示这些差距，
-冷编译和 Python 调用分别列出。
+![TileLang 与 Triton 的配对原生耗时](assets/parity.svg)
 
-当前作者程序包含几个与性能有关的明确选择：
+选定的 553 项均有匹配的 Triton 对照，每项 TileLang 原生耗时不超过对应
+Triton 的 **1.03 倍**。候选与对照使用同一批输入交替测量；候选就是已通过
+TileLang 源码 JIT 数值检查后导出的同一份原生库。
 
-- [`packed.accumulate`](https://github.com/Tianchen-ai/tilelang-weft/blob/v0.1.15-weft.2/tilelang/weft/kernels/packed.py)
-  为 Q4_K/Q6_K 使用 typed 整数 partial，再以 F64 缩放累加。通用 codebook
-  路径每次解码 32 个值，转换为 F64，并逐段归约。
-- `packed.projection` 在每次调用内量化 activation，然后遍历 activation 行、
-  输出列组和 packed record。权重解码位于这棵循环树内部，限制了跨 activation 行复用。
-- [`matrix.packed_x86`](https://github.com/Tianchen-ai/tilelang-weft/blob/v0.1.15-weft.2/tilelang/weft/kernels/matrix.py)
-  为每个量化组构造 64 元素操作数。矩阵指令加速 contraction；操作数构造、packing
-  和逐组更新仍属于完整 workload。
+K3 的两项 Q1 对照使用保留的 Triton Canonical 程序，经修复精确 I8 归约的
+共享编译器重新生成。旧对照在对 `-128` 取负时溢出：边界输入得到 `-2048`，
+正确结果应为 `0`；两种前端修复后的产物都通过该输入。
+`triton_historical_us` 保留旧耗时，`triton_control_note` 标出修正的比较。
 
-这些是源码和生成程序中的事实；各部分的耗时贡献需要定向优化测量确认。保留的产物和
-源码参数可用于直接复现。Triton 耗时作为独立对照列保留，作者实现的差异明确列出。
+| 平台 | 匹配原生配对 | 3% 范围内 |
+|---|---:|---:|
+| SG2044 | 133 | 133/133 |
+| K1 | 137 | 137/137 |
+| K3 A100 | 136 | 136/136 |
+| x86 | 147 | 147/147 |
+| 合计 | 553 | 553/553 |
+
+`native_us` 与 `triton_native_us` 来自这些同场配对。外部参考保留固定库与
+原观测身份，其倍率使用 `reference_us / reference_candidate_us`。
+冷 JIT、缓存恢复和 Python 调用各自单列，均在原生比较窗口之外。
+
+## 作者程序与共享编译
+
+TileLang 原生 TIRx 导入 Triton–Weft 同一套 Canonical 编译器。完整 packed workload
+保留输入准备、Encoding、整数 partial、scale/min 支路和输出更新；正式绑定逐项
+列明作者程序、分块、准备协议及目标物理参数。
+
+- 短 record 与 K/IQ 格式使用有界的 entry/payload 或 plane Level。
+  I16/I32 partial 在声明的浮点更新前完成；源码参数明确 record 窗口、行 cohort 和复用范围。
+- 完整 projection 将 activation 量化保留在调用内。显式权重与 activation stage
+  在作者指定的行列 cohort 中复用编码 panel；持久派生布局有单独声明的准备协议。
+- IME1、IME2、VNNI 和 AMX 变体在作者程序中表达操作数布局与局部 contraction 意图。
+  共享物理 passes 选择指令、局部 packing、转换和资源处理。
+- 动态 RoPE 遍历保留运行时长度，并在写输出前取得两个输入快照。
+  Indexed 程序保留明确的 lookup 位宽与 record metadata 读取，Encoding 提供真实存储几何。
+
+前端修复保留标量 SSA、helper 轴、恒等 slice、字段投影和循环 carry。
+共享编译器补齐 scalar tuple pack、Boolean 比较布局、整数归约、alias 与 capture
+活跃性分析。成组 dense-memory 传输在真实读写前规范化选定的 carrier；矩阵结果接
+逐元素运算时，即使操作数向量等宽，也按有序逻辑轴保留正确的 lane 坐标。
+编译器依据这些 typed program 降低，不按 kernel 或量化格式名称分派实现。
+每个候选均记录实际使用的 Clang 23 配置。
+
+共享 widening 归约保留作者声明的整数 partial。零种子作为只读 RVV intrinsic 值
+供给局部汇编，让 LLVM 在循环中复用它，归约顺序保持不变。SG2044 的 Q6_K dot
+同场配对为 **TileLang 1.060 µs / Triton 1.054 µs**；生成代码减少了重复的
+种子初始化与向量状态设置。
+
+对于 indexed entry load，归约选择同时检查完整活跃集和有界的类型化 producer 链。
+独立归约能够放入资源预算时，保留 intrinsic，让 LLVM 重叠查表供给与计算。
+该选择消费已有物理操作、轴和生命周期。
+
+K1 的 Q2_K prefill 选定作者程序将 U2 code 与 U4 scale 合入调用内的 I8 panel，
+其精确范围为 `[0, 45]`。矩阵 contraction 跨 activation 行复用这个 panel；
+I16 block-sum 修正仍采用向量路线。完整原生交替配对为 **TileLang 976.196 ms /
+Triton 1446.994 ms**，相对保留的 Triton 程序为 **1.482×**。
+activation 量化和 panel 填充均计入调用。复用结构来自作者程序；共同编译器保留
+Encoding、矩阵布局、数值支路和正确的 lane 坐标。
 
 ## 数值范围与执行证据
 
@@ -69,8 +111,12 @@ projection decode 检查每个输出列；prefill 使用已有的 64 输出抽�
 热调用耗时、原生样本，以及与正式源码绑定一致。源码等价核对明确标识文档修改或
 Canonical 程序未变时继承的测量；记录保留原包版本。
 
-x86 编译器修复另外使用前后两版 core 降低了全部 147 份 Canonical 程序：4 份 LLVM
-模块变化，对应 4 项已重新执行；其余 143 份相同。最新 core 改动限于 x86 物理 passes。
+最终编译器重新导入全部 553 项选定的原始 TIRx 程序：357 项生成代码完全一致，
+196 项仅增加只读 `restrict` 限定。实际执行体改变的程序已通过安装包验证和原生
+配对后再选入结果；代码未变的程序保留原测量。
+
+Canonical 与 Physical 核对定位编译器或作者程序改动影响的程序，再以目标机安装包
+定向验证相关路径。未变程序保留原观测与包身份；来源文件记录源码绑定和共享 core 的提交。
 
 `used_extensions` 来自产物的 IME/AMX 要求；`selected_physical_engines`、
 架构、VLEN 和资源 metadata 展示 lowering。条件指令路径的运行观察另列。

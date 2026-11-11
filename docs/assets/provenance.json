@@ -1,67 +1,157 @@
 {
   "schema": 1,
-  "campaign": "TileLang-Weft target-native source JIT; full operator suites",
+  "campaign": "TileLang-Weft performance inheritance; target-native source JIT and alternating native controls",
   "case_count": 553,
   "distinct_case_ids": 150,
   "matched_external_references": 543,
   "reference_gaps": 10,
-  "matched_independent_triton_controls": 505,
+  "matched_independent_triton_controls": 553,
   "release_sources": {
     "tilelang": {
       "repository": "https://github.com/Tianchen-ai/tilelang-weft",
-      "release": "v0.1.15-weft.2",
+      "release": "weft-parity",
       "package": "0.1.15+weft.2",
-      "author_program_commit": "10b91b2fd04793fba9d338de519ecf7509fd762e"
+      "author_program_commit": "bd00db35"
     },
     "weft_core": {
       "repository": "https://github.com/Tianchen-ai/triton-weft",
-      "commit": "1d19dd4b9a956614bb5a17e926b54b8d2e8869b3",
+      "commit": "698eebf6c7cc37c32c5260e384f8617046833b42",
       "package": "0.1.1"
     },
     "shared_bench": {
       "repository": "https://github.com/Tianchen-ai/triton-weft-bench",
-      "runtime_commit": "93ee197",
-      "documentation_commit": "e93221d",
+      "runtime_commit": "f788915",
       "package": "1.0.1"
     },
     "tilelang_bench": {
       "repository": "https://github.com/Tianchen-ai/tilelang-weft-bench",
-      "release": "v0.1.0",
+      "release": "weft-parity",
       "package": "0.1.0"
     }
   },
   "observed_tilelang_versions": {
-    "0.1.15+weft.2": 448,
-    "0.1.15+weft.1": 105
-  },
-  "source_equivalence": {
-    "scope": "Only source-location attributes normalized; original observation versions retained. This audit is not additional execution.",
-    "matched_programs": {
-      "sg2044": 133,
-      "k1": 137,
-      "k3-a100": 136,
-      "x86-1t": 147
-    }
+    "0.1.15+weft.2": 553
   },
   "compiler_change_audit": {
-    "scope": "same retained Canonical program lowered by old and new x86 compiler; not an execution result",
-    "old_count": 147,
-    "new_count": 147,
-    "changed": [
-      "amx_q4_k_decode_tile",
-      "iq1_s_dequantize",
-      "iq1_s_dot",
-      "iq1_s_dot_rows"
-    ]
+    "scope": "All 553 selected author programs lower and emit through the shared compiler. Source/Physical audits identify affected paths for installed-package reruns; unchanged observations retain their original artifact and package evidence.",
+    "compiled_programs": 553,
+    "failed_programs": 0,
+    "targets": [
+      "sg2044",
+      "k1",
+      "k3-a100",
+      "x86-1t"
+    ],
+    "shared_repairs": [
+      "numeric scalar tuple packs",
+      "legal Boolean issue partitions",
+      "readonly alias facts",
+      "single-iteration capture liveness",
+      "row-broadcast FMA",
+      "grouped dense-memory carrier normalization",
+      "equal-width ordered lane alignment",
+      "complete-record ABI extent proofs",
+      "signed-I8 mask reduction",
+      "numeric conversion carrier closure",
+      "preserve source-state fragment initialization",
+      "grouped widening reduction vector-state cost",
+      "immutable shared reduction identity supply",
+      "bounded indexed-producer overlap in grouped reduction scheduling"
+    ],
+    "unchanged_riscv_emission": {
+      "scope": "Matched old/new compilation of all 406 selected RISC-V Canonical programs",
+      "grouped_memory_repair": {
+        "checked": 406,
+        "identical_c": 406
+      },
+      "ordered_lane_repair": {
+        "checked": 406,
+        "identical_c": 406
+      },
+      "x86": "Both repairs are confined to the RISC-V target. Its existing LLVM and native evidence is retained."
+    },
+    "new_matrix_consumer": "K1 Q2_K whole-record I8 panel: target-native JIT, numerical checks and cache restoration pass; alternating complete-workload native pair 976.196175 ms versus Triton 1446.993895 ms. Activation quantization, panel population and correction remain inside each call.",
+    "numeric_conversion_repair": {
+      "audited_existing_programs": 553,
+      "unchanged_programs": 553,
+      "consumer": "A staged F32 lookup table preserves the intermediate numeric SEW/LMUL and receives the gather capacity through an explicit representation conversion."
+    },
+    "final_selected_scope": {
+      "checked": 553,
+      "basis": "The final installed TileLang frontend reimports the original TIRx function from each selected source-JIT artifact and lowers it with the released shared core. No text IR round trip is used. Affected native bodies have fresh source-JIT checks and exact artifact-matched alternating pairs; unchanged bodies retain their original observations.",
+      "counts": {
+        "readonly_qualifiers": 196,
+        "identical": 357,
+        "changed": 0
+      },
+      "status": "553 selected programs match the final emitted body; qualifier-only differences add readonly restrict facts while existing writers already carry restrict",
+      "per_case_audit": "compiler-emission.json"
+    },
+    "new_row_consumer": "K3 IQ4_XS runtime row: typed U8 lookup indices and explicit I32 intermediary, original record snapshots retained. Alternating exact installed-JIT native artifact pair 8.7010655 ms versus Triton 8.6255695 ms.",
+    "reduction_repair": {
+      "scope": "grouped widening reductions",
+      "source": "physical partial-set slots, register liveness and VL/VTYPE state work",
+      "validation": {
+        "q3_k_projection_decode": 1.0189789747832954,
+        "q3_k_projection_prefill": 1.0046171611708634,
+        "q6_k_projection_decode": 1.0104512970815194
+      },
+      "ratio": "TileLang native time / retained Triton native time"
+    },
+    "immutable_seed_repair": {
+      "source": "The selected widening reduction uses a pure read-only RVV zero intrinsic instead of reinitializing that value inside opaque assembly. LLVM can hoist or reuse its SSA value. No author numerical group or Level changes.",
+      "affected_cases": {
+        "sg2044": [
+          "iq2_s_projection_decode",
+          "q3_k_projection_decode",
+          "q3_k_projection_prefill",
+          "q5_k_projection_decode",
+          "q6_k_projection_decode",
+          "q4_k_dot",
+          "q4_k_dot_rows",
+          "q4_k_projection_decode",
+          "q6_k_dot",
+          "iq2_s_dot",
+          "q3_k_dot",
+          "q3_k_dot_rows",
+          "iq2_s_dot_rows"
+        ],
+        "k1": [
+          "q4_k_projection_decode",
+          "iq1_s_dot",
+          "q4_k_dot",
+          "q4_k_dot_rows",
+          "iq2_s_projection_decode",
+          "q2_k_projection_decode",
+          "q5_k_projection_decode",
+          "iq2_s_dot",
+          "iq2_s_dot_rows"
+        ],
+        "k3-a100": [
+          "q5_k_dot_rows",
+          "q4_k_projection_decode",
+          "q5_k_dot",
+          "iq2_s_projection_decode",
+          "iq2_s_dot",
+          "iq2_s_dot_rows"
+        ]
+      },
+      "q6_dot_native_us": 1.06,
+      "retained_triton_us": 1.054,
+      "ratio": 1.0058377492402741,
+      "status": "affected installed-package validation and exact artifact-matched native pairs passed",
+      "indexed_supply": "When the complete independent live set fits, a bounded typed producer walk preserves intrinsic scheduling for indexed entry loads. This keeps lookup supply and reduction overlap visible to LLVM; the selected physical operations retain their declared numerical groups and lifetimes."
+    }
   },
   "measurement": {
     "ratio": "matched reference native time / TileLang native time",
     "native": "complete recorded workload; cold JIT and Python calls separate",
     "cold": "compilation plus first full workload call; compiler API time is also recorded",
     "cache": "fresh-process restoration and invocation; original cache events retained",
-    "numerical_checks": "exact serialized fields and integers; established floating tolerances; projection decode checks all columns, prefill checks64 outputs and all-output finiteness"
+    "numerical_checks": "exact serialized fields and integers; established floating tolerances; projection decode checks all columns, prefill checks64 outputs and all-output finiteness",
+    "triton": "TileLang native time / Triton native time; alternating samples on shared inputs; per-case ratio <= 1.03"
   },
-  "selection": "Explicit final observation by case; no minimum-time selection. Isolated K3 Q2_K and I4 protocol observations replace the timings marked invalid for overlapping work.",
+  "selection": "Explicit observation selection by case; checked source-JIT artifact matched to its alternating native pair; no minimum-time selection.",
   "reference_catalog": {
     "ggml-cpu-rvv": {
       "provider": "GGML",
@@ -155,6 +245,20 @@
     "summary": "summary.json",
     "original_samples": "observations.json",
     "plot": "performance.svg",
-    "plot_png": "performance.png"
+    "plot_png": "performance.png",
+    "parity_plot": "parity.svg",
+    "parity_plot_png": "parity.png"
+  },
+  "binding_validation": {
+    "scope": "Actual installed source module, factory, parameters, physical options, toolchain, typed arguments, grid and thread count matched to the formal catalog. Paired native library and generated program matched byte-for-byte to that checked source JIT artifact.",
+    "matched_selected_cases": 553,
+    "matched_triton_native_controls": 553
+  },
+  "triton_control_corrections": {
+    "k3-a100": [
+      "q1_0_dot",
+      "q1_0_dot_rows"
+    ],
+    "reason": "The retained controls overflowed on I8 -128 negation. The same retained Triton Canonical program was rebuilt after the exact signed-I8 reduction repair; the endpoint check now passes. Historical samples remain separate."
   }
 }

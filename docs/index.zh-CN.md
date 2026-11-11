@@ -21,12 +21,14 @@
 wheel：
 
 ```sh
-gh release download v0.1.15-weft.2 --repo Tianchen-ai/tilelang-weft \
+gh release download weft-parity --repo Tianchen-ai/tilelang-weft \
   --pattern '*.whl' --dir wheels
-gh release download v0.1.0 --repo Tianchen-ai/tilelang-weft-bench \
+gh release download weft-parity --repo Tianchen-ai/tilelang-weft-bench \
   --pattern '*.whl' --pattern constraints.txt --dir wheels
 python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
   tilelang tilelang-weft-bench
+python -m pip install --force-reinstall --no-deps --no-index --find-links ./wheels \
+  -c ./wheels/constraints.txt tilelang weft-core triton-weft-bench tilelang-weft-bench
 tilelang-weft-bench list --kind targets
 ```
 
@@ -45,6 +47,11 @@ Release 的 `constraints.txt` 固定 TileLang `0.1.15+weft.2`、core `0.1.1`、�
 
 每台执行主机安装对应原生 wheel。RISC-V Python ABI、libc 和 x86 指令要求见各 wheel
 的发行说明。core SDK 提供 Clang 23、resource headers 和 OpenMP 支持。
+
+配套 core wheel 覆盖 x86-64 CPython 3.10，以及 RISC-V LP64D CPython
+3.11/3.12/3.14。随包原生库要求 x86-64 glibc 2.34+、RISC-V glibc 2.38+，
+以及 GLIBCXX 3.4.30+。TileLang wheel 使用对应宿主架构的 CPython 稳定 ABI；
+core wheel 匹配具体解释器。
 
 ## 查找并运行算子
 

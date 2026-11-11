@@ -15,12 +15,14 @@
 从 CPU PyTorch 环境安装配套发行包：
 
 ```sh
-gh release download v0.1.15-weft.2 --repo Tianchen-ai/tilelang-weft \
+gh release download weft-parity --repo Tianchen-ai/tilelang-weft \
   --pattern '*.whl' --dir wheels
-gh release download v0.1.0 --repo Tianchen-ai/tilelang-weft-bench \
+gh release download weft-parity --repo Tianchen-ai/tilelang-weft-bench \
   --pattern '*.whl' --pattern constraints.txt --dir wheels
 python -m pip install --find-links ./wheels -c ./wheels/constraints.txt \
   tilelang tilelang-weft-bench
+python -m pip install --force-reinstall --no-deps --no-index --find-links ./wheels \
+  -c ./wheels/constraints.txt tilelang weft-core triton-weft-bench tilelang-weft-bench
 tilelang-weft-bench list --kind targets
 tilelang-weft-bench list --kind kernels --target k3-a100
 tilelang-weft-bench show q4_k_dot --target x86-1t --config .local/bench.local.json
@@ -42,16 +44,19 @@ tilelang-weft-bench op q4_k_dot --target x86-1t --config .local/bench.local.json
 
 | 平台 | JIT 与数值检查 | 匹配参考 | 快于参考 | 原生倍率中位数 |
 |---|---:|---:|---:|---:|
-| SG2044 | 133/133 | 132 | 11 | 0.0580× |
-| K1 | 137/137 | 136 | 9 | 0.1143× |
-| K3 A100 | 136/136 | 135 | 10 | 0.1074× |
-| x86 | 147/147 | 140 | 11 | 0.0375× |
-| **合计** | **553/553** | **543** | **41** | — |
+| SG2044 | 133/133 | 132 | 106 | 1.3598× |
+| K1 | 137/137 | 136 | 104 | 1.3176× |
+| K3 A100 | 136/136 | 135 | 128 | 1.6569× |
+| x86 | 147/147 | 140 | 130 | 1.2917× |
+| **合计** | **553/553** | **543** | **468** | — |
 
-倍率为 **匹配参考原生耗时 / TileLang 原生耗时**，图中包含每项匹配的正式用例。
+![逐项继承 Triton 原生性能](docs/assets/parity.png)
+
+**553/553** 项原生比较满足 **TileLang 耗时 ≤ Triton 耗时 × 1.03**。
+已检查的源码 JIT 产物与保留的 Triton 对照使用同一批输入交替测量。
+外部库倍率为 **匹配参考原生耗时 / TileLang 原生耗时**，图中包含每项匹配的正式用例。
 [算子 CSV](docs/assets/operators.csv) 分别记录原生计算、冷 JIT、新进程缓存恢复和
-Python 调用。[结果工具书](docs/results.zh-CN.md) 说明数值检查范围，以及当前
-packed dot/projection 的性能差距。
+Python 调用。[结果工具书](docs/results.zh-CN.md) 说明数值检查范围、作者程序和配对计时边界。
 
 GitHub 的分支和 tag 会在 push、发布 Release 后自动同步到
 [Gitee 镜像](https://gitee.com/dongshan-community/tilelang-weft-bench)。
